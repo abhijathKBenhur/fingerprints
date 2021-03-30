@@ -1,0 +1,21 @@
+
+.imageContainer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    .dropZone{
+        background-color: #F1F1F1;
+        border: 1px dashed #c7c7c7;
+        border-style: dashed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #8c8888;
+        width: 100%;
+        outline: none;
+    }
+    .droppedImage{
+    
+    }
+}
