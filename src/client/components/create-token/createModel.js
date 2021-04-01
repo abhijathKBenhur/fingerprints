@@ -1,88 +1,104 @@
 import React, { Component, useState } from "react";
 import { Modal, Button, Row, Col, Form, InputGroup } from "react-bootstrap";
-import { useDropzone } from "react-dropzone";
-import * as yup from "yup";
+import Dropzone from "react-dropzone";
 import "./Modal.scss";
 
-let handleSubmit = (e) => {
-  console.log(e);
-};
-export default function AddTokenModal(props) {
-  const [file, setFile] = useState(undefined);
+class AddTokenModal extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tokenName: "",
+      tokenCategory: "Graffiti",
+      tokenDescription: "",
+      tokenCost: 0,
+      tokenSupply: 1,
+      file: undefined,
+      callback: props.onSubmit
+    };
 
-  const { getRootProps, getInputProps } = useDropzone({
-    accept: "image/*",
-    onDrop: (acceptedFiles) => {
-      setFile(
-        Object.assign(acceptedFiles[0], {
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+
+    this.onDrop = (acceptedFiles) => {
+      this.setState({
+        file: Object.assign(acceptedFiles[0], {
           preview: URL.createObjectURL(acceptedFiles[0]),
-        })
-      );
-      console.log(file);
-    },
-  });
+        }),
+      });
+    };
+  }
 
-  let handleChange = (e) => {
-    console.log(e);
-  };
+  handleChange(event) {
+    var stateObject = function() {
+      let returnObj = {};
+      returnObj[this.target.name] = this.target.value;
+         return returnObj;
+    }.bind(event)();
+    this.setState(stateObject)
+  }
 
-  let values = {};
- 
-  return (
-    <Modal
-      {...props}
-      size="lg"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-    >
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">
-          Create Token
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form noValidate onSubmit={handleSubmit}>
+  handleSubmit(event) {
+    event.preventDefault();
+    this.props.onHide()
+    this.state.callback(this.state)
+  }
+
+  render() {
+    return (
+      <Modal
+        {...this.props}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Create Token
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+
+        <Form noValidate onSubmit={this.handleSubmit}>
           <Form.Row>
             <Form.Group as={Col} md="6">
-              <Form.Group as={Col} md="12" controlId="createTokenName">
+              <Form.Group as={Col} md="12" controlId="tokenName">
                 <Form.Label>Name</Form.Label>
                 <Form.Control
                   type="text"
-                  name="name"
-                  value={values.name}
-                  onChange={handleChange}
+                  name="tokenName"
+                  onChange={this.handleChange}
                 />
                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
               </Form.Group>
-              <Form.Group as={Col} md="12" controlId="createTokenCategory">
+              <Form.Group as={Col} md="12" controlId="tokenCategory">
                 <Form.Label>Category</Form.Label>
                 <Form.Control
                   as="select"
                   className="my-1 mr-sm-2"
                   custom
-                  value={values.category}
+                  name="tokenCategory"
+                  onChange={this.handleChange}
                 >
-                  <option value="Graffiti">Artworks</option>
+                  <option value="Graffiti">Graffiti</option>
                   <option value="Vectors">Vectors</option>
                   <option value="Doodles">Doodles</option>
                 </Form.Control>
 
                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
               </Form.Group>
-              <Form.Group as={Col} md="12" controlId="createTokenDescription">
+              <Form.Group as={Col} md="12" controlId="tokenDescription">
                 <Form.Label>Description</Form.Label>
                 <InputGroup hasValidation size="lg">
                   <Form.Control
                     type="textarea"
                     placeholder="Description"
                     aria-describedby="inputGroupAppend"
-                    name="description"
-                    value={values.description}
-                    onChange={handleChange}
+                    name="tokenDescription"
+                    onChange={this.handleChange}
                   />
                 </InputGroup>
               </Form.Group>
-              <Form.Group as={Col} md="12" controlId="createTokenCost">
+              <Form.Group as={Col} md="12" controlId="tokenCost">
                 <Form.Row>
                   <Form.Group as={Col} md="6">
                     <Form.Label>Cost</Form.Label>
@@ -90,55 +106,64 @@ export default function AddTokenModal(props) {
                       <Form.Control
                         type="number"
                         placeholder="0.0"
-                        value={values.cost}
                         min={1}
                         aria-label="Amount (ether)"
+                        name="tokenCost"
+                        onChange={this.handleChange}
                       />
                       <InputGroup.Append>
                         <InputGroup.Text>ETH</InputGroup.Text>
                       </InputGroup.Append>
                     </InputGroup>
                   </Form.Group>
-                  <Form.Group as={Col} md="6" controlId="createTokenCost">
+                  <Form.Group as={Col} md="6" controlId="tokenSupply">
                     <Form.Label>Total Suply</Form.Label>
                     <Form.Control
                       type="number"
-                      value={values.totalsupply}
                       className="my-1 mr-sm-2"
+                      name="tokenSupply"
+                      onChange={this.handleChange}
                     ></Form.Control>
                   </Form.Group>
                 </Form.Row>
               </Form.Group>
             </Form.Group>
             <Form.Group as={Col} md="6" className="imageContainer">
-              {!file && (
-                <div {...getRootProps()} className="dropZone h-100">
-                  <input {...getInputProps()} />
-                  <p>Drop files here</p>
-                </div>
-              )}
-
-              {file && (
-                <img
-                  src={file.preview}
-                  alt="preview"
-                  className="droppedImage"
-                />
-              )}
+              <Dropzone onDrop={this.onDrop}  className="dropzoneContainer">
+                  {({getRootProps, getInputProps}) => (
+                    <section className="container">
+                      {!this.state.file && (
+                        <div {...getRootProps()} className="dropZone h-100">
+                          <input {...getInputProps()} />
+                          <p>Drop files here</p>
+                        </div>
+                      )}
+                    </section>
+                  )}
+                </Dropzone>
+                {this.state.file && (
+                  <img
+                    src={this.state.file.preview}
+                    alt="preview"
+                    className="droppedImage"
+                    style={{width:'90%'}}
+                  />
+                )}
             </Form.Group>
           </Form.Row>
         </Form>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="dark" onClick={props.onHide}>
-          Cancel
-        </Button>
-        <Button variant="danger" onClick={() =>{
-          console.log("etst")
-        }}>
-          Create
-        </Button>
-      </Modal.Footer>
-    </Modal>
-  );
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="dark" onClick={this.props.onHide}>
+            Cancel
+          </Button>
+          <Button variant="danger" value="Submit" onClick={this.handleSubmit}>
+            Create
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
 }
+
+export default AddTokenModal;

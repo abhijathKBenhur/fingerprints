@@ -60,14 +60,7 @@ class App extends Component {
     }
   }
 
-  mint = (color) => {
-    this.state.contract.methods.mint(color).send({ from: this.state.account })
-    .once('receipt', (receipt) => {
-      this.setState({
-        colors: [...this.state.colors, color]
-      })
-    })
-  }
+
 
   constructor(props) {
     super(props)
@@ -79,37 +72,31 @@ class App extends Component {
     }
   }
 
-  headerCallBack(action){
-    switch(action){
-      
-    }
-  }
+  onUploadComplete = (options) => {
+    this.state.contract.methods.mint(options).send({ from: this.state.account })
+    .once('receipt', (receipt) => {
 
-  captureFile(event) {
-    event.preventDefault()
-    const file = event.target.files[0]
-    const reader = new window.FileReader()
-    reader.readAsArrayBuffer(file)
-    reader.onloadend = () => {
-      this.setState({ buffer:Buffer(reader.result) })
-      console.log('buffer', this.state.buffer)
-    }
-  }
-
-  onSubmit(event) {
-    window.ipfs.files.add(this.state.buffer, (error, result) => {
-      if(error) {
-        console.error(error)
-        return;
-      }
-      this.mint(result[0].path)
     })
+  }
+
+  onSubmit(form) {
+    const reader = new window.FileReader()
+    reader.readAsArrayBuffer(form.file);
+    reader.onloadend = () => {
+      window.ipfs.files.add(Buffer(reader.result), (error, result) => {
+        if(error) {
+          console.error(error)
+          return;
+        }
+        this.onUploadComplete({file:result[0].path}, this.onUploadComplete)
+      })
+    }
   }
 
   render() {
     return (
       <div className="appContainer">
-        <Header></Header>
+        <Header submitForm={this.onSubmit}></Header>
         <Container fluid className="mt-4">
           <Row className="w-100">
              {

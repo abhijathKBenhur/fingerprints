@@ -4,6 +4,9 @@
     align-items: center;
     justify-content: center;
     outline: none;
+    .container{
+        height: 100%;
+    }
     .dropZone{
         background-color: #F1F1F1;
         border: 1px dashed #c7c7c7;

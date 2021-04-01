@@ -30,6 +30,7 @@ const Header = (props) => {
       <AddTokenModal
         show={showModal}
         onHide={() => setShowModal(false)}
+        onSubmit={props.submitForm}
       ></AddTokenModal>
       <nav className="navbar navbar-light bg-light flex-md-nowrap shadow">
         <a className="navbar-brand" target="_blank" rel="noopener noreferrer">
