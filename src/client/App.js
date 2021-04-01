@@ -48,7 +48,6 @@ class App extends Component {
       const contract = new web3.eth.Contract(abi, address)
       this.setState({ contract })
       const totalSupply = await contract.methods.totalTokens().call()
-      const totalNumbers = totalSupply
       this.setState({ totalSupply })
       for (var i = 1; i <= totalSupply; i++) {
         const fingerprint = await contract.methods.metadataOf(i).call()
