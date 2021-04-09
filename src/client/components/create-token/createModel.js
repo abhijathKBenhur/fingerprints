@@ -129,7 +129,7 @@ class AddTokenModal extends Component {
               </Form.Group>
             </Form.Group>
             <Form.Group as={Col} md="6" className="imageContainer">
-              <Dropzone onDrop={this.onDrop}  className="dropzoneContainer">
+              <Dropzone onDrop={this.onDrop}  acceptedFiles={".jpeg"} className="dropzoneContainer">
                   {({getRootProps, getInputProps}) => (
                     <section className="container">
                       {!this.state.file && (

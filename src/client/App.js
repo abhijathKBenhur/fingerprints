@@ -70,10 +70,21 @@ class App extends Component {
       totalSupply: 0,
       fingerprints: [],
     }
+    this.onSubmit = this.onSubmit.bind(this);
+    this.onUploadComplete = this.onUploadComplete.bind(this);
   }
 
-  onUploadComplete = (options) => {
-    this.state.contract.methods.mint(options).send({ from: this.state.account })
+  onUploadComplete = ({options}) => {
+    let payLoad = {
+      account: this.state.account,
+      file: options.file,
+      name: options.tokenName,
+      category: options.tokenCategory,
+      amount: parseFloat(options.tokenSupply),
+      price:  window.web3.utils.toWei(options.tokenCost, 'ether'),
+      uri: options.file
+    }
+    this.state.contract.methods.mint(payLoad).send({ from: this.state.account })
     .once('receipt', (receipt) => {
 
     })
@@ -88,7 +99,8 @@ class App extends Component {
           console.error(error)
           return;
         }
-        this.onUploadComplete({file:result[0].path}, this.onUploadComplete)
+        form.file = result[0].path
+        this.onUploadComplete({options:form}, this.onUploadComplete)
       })
     }
   }

@@ -1,5 +1,5 @@
-const Color = artifacts.require("Color");
+const Fingerprints = artifacts.require("Fingerprints");
 
 module.exports = function(deployer) {
-  deployer.deploy(Color);
+  deployer.deploy(Fingerprints);
 };
