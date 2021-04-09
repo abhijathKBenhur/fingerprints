@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardDeck, Image } from "react-bootstrap";
 
-const TopPicks = () => {
+const TopPicks = (props) => {
 
     return (
         <div  className="mt-4">

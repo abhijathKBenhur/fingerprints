@@ -8,8 +8,8 @@ import { Container, Row, Col } from "react-bootstrap";
 
 // componenets import
 import Header from './components/header/header'
-// import TopPicks from './components/TopPicks/TopPicks'
-// import Trending from './components/Trending/Trending'
+import TopPicks from './components/TopPicks/TopPicks'
+import Trending from './components/Trending/Trending'
 class App extends Component {
 
 
@@ -84,7 +84,14 @@ class App extends Component {
       price:  window.web3.utils.toWei(options.tokenCost, 'ether'),
       uri: options.file
     }
-    this.state.contract.methods.mint(payLoad).send({ from: this.state.account })
+    this.state.contract.methods.mint(
+      payLoad.account, 
+      payLoad.name,
+      payLoad.category,
+      payLoad.amount,
+      payLoad.price,
+      payLoad.uri,
+      ).send({ from: this.state.account })
     .once('receipt', (receipt) => {
 
     })
