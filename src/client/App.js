@@ -1,18 +1,17 @@
 import React, { Component } from 'react';
 import Web3 from 'web3'
 import ipfs from './config/ipfs'
-
+import Fingerprint from './components/models/Fingerprint'
 import './App.scss';
 import Fingerprints from '../abis/Fingerprints.json'
 import { Container, Row, Col } from "react-bootstrap";
-
+import cardCategories from '../client/commons/Constants'
 // componenets import
 import Header from './components/header/header'
 import TopPicks from './components/TopPicks/TopPicks'
-import Trending from './components/Trending/Trending'
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+
 class App extends Component {
-
-
   async componentWillMount() {
     window.Fingerprints = Fingerprints
     window.ipfs = ipfs;
@@ -52,7 +51,7 @@ class App extends Component {
       for (var i = 1; i <= totalSupply; i++) {
         const fingerprint = await contract.methods.metadataOf(i).call()
         this.setState({
-          fingerprints: [...this.state.fingerprints, fingerprint]
+          fingerprints: [...this.state.fingerprints, new Fingerprint(fingerprint)]
         })
       }
     } else {
@@ -114,26 +113,14 @@ class App extends Component {
 
   render() {
     return (
-      <div className="appContainer">
-        <Header submitForm={this.onSubmit}></Header>
-        <Container fluid className="mt-4">
-          <Row className="w-100">
-             {
-                this.state.fingerprints.map(fingerprint => {
-                  return ( 
-                    <div key={fingerprint[0]}>
-                      <Col>{fingerprint[0]}</Col> 
-                      <Col>{fingerprint[1]}</Col> 
-                      <Col>{fingerprint[5]}</Col> 
-                      <Col>{fingerprint[6]}</Col> 
-                      <Col>{Number(window.web3.utils.fromWei(fingerprint[3].toString(), 'ether')).toFixed(2)} ETH</Col> 
-                    </div>
-                  )
-                })
-              }
-          </Row>
-        </Container>
-      </div>
+        <div className="appContainer">
+          <Header submitForm={this.onSubmit}></Header>
+          <Container fluid className="cardSection">
+                <Row className="w-100">
+                    <TopPicks category={cardCategories.CONTEMPORARY} cards={this.state.fingerprints.filter(card => card.category == cardCategories.CONTEMPORARY)} ></TopPicks>
+                </Row>
+              </Container>
+        </div>
     );
   }
 }

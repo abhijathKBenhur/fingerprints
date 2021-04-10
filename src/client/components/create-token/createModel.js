@@ -1,14 +1,15 @@
 import React, { Component, useState } from "react";
 import { Modal, Button, Row, Col, Form, InputGroup } from "react-bootstrap";
 import Dropzone from "react-dropzone";
+import cardCategories from '../../../client/commons/Constants'
 import "./Modal.scss";
-
+import _ from 'lodash'
 class AddTokenModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
       tokenName: "",
-      tokenCategory: "Graffiti",
+      tokenCategory: _.values(cardCategories)[0],
       tokenDescription: "",
       tokenCost: 0,
       tokenSupply: 1,
@@ -79,9 +80,11 @@ class AddTokenModal extends Component {
                   name="tokenCategory"
                   onChange={this.handleChange}
                 >
-                  <option value="Graffiti">Graffiti</option>
-                  <option value="Vectors">Vectors</option>
-                  <option value="Doodles">Doodles</option>
+                  {
+                    _.values(cardCategories).map(category => {
+                      return <option key={category} value={category}>{category}</option>
+                    })
+                  }
                 </Form.Control>
 
                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>

@@ -5,19 +5,21 @@ const TopPicks = (props) => {
 
     return (
         <div  className="mt-4">
-            <h3>Top Picks</h3>
+            <h3>{props.category}</h3>
             <CardDeck>
-                {[7,8,9,10,11,12].map(number => {
-                    return (<Card>
-                        <Card.Img variant="top" src={"https://source.unsplash.com/random/200x200?sig="+number} />
+                {props.cards.map((fingerprint,index) => {
+                    return (
+                    <Card key={index}>
+                        <Card.Img variant="top" src={"https://source.unsplash.com/random/200x200?sig="+2} />
                         <Card.Body>
-                            <Card.Title>Card title</Card.Title>
+                            <Card.Title>{fingerprint.title}</Card.Title>
                             <Card.Text>
-                                This content is a little bit longer.
+                                {fingerprint.category}
                             </Card.Text>
                         </Card.Body>
                         <Card.Footer>
-                            <small className="text-muted">Last updated 3 mins ago</small>
+                            {/* <small className="text-muted">{fingerprint.supply} In supply</small> */}
+                            <small className="text-muted">{fingerprint.cost} ETH</small>
                         </Card.Footer>
                     </Card>
                 )})}
@@ -26,5 +28,4 @@ const TopPicks = (props) => {
         </div>
     );
 };
-
 export default TopPicks;
