@@ -1,19 +1,22 @@
 import React ,{useState} from "react";
 import { Button, Dropdown, Image } from "react-bootstrap";
-
-// custom components
+import { useHistory } from 'react-router-dom';
 import logo from "../../../assets/logo/Fingerprints.png";
 import AddTokenModal from "../create-token/createModel";
 
 const Header = (props) => {
+  let history = useHistory();
   const [showModal, setShowModal] = useState(false);
+  function gotoGallery(){
+    history.push('/home')
+  }
   const ProfileDropDown = React.forwardRef(({ children, onClick }, ref) => (
     <a
       href= ""
       ref={ref}
       onClick={(e) => {
         e.preventDefault();
-        onClick(e);
+        gotoGallery(e);
       }}
     >
       <Image

@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import Web3 from 'web3'
 import ipfs from './config/ipfs'
-import Fingerprint from './components/models/Fingerprint'
+import Fingerprint from './beans/Fingerprint'
 import './App.scss';
 import Fingerprints from '../abis/Fingerprints.json'
-import { Container, Row, Col } from "react-bootstrap";
-import cardCategories from '../client/commons/Constants'
-// componenets import
+
+import NFT from './screens/NFT/NFT'
+import Gallery from './screens/gallery/gallery'
 import Header from './components/header/header'
-import TopPicks from './components/TopPicks/TopPicks'
+import { Container, Row, Col } from "react-bootstrap";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 class App extends Component {
@@ -115,11 +115,18 @@ class App extends Component {
     return (
         <div className="appContainer">
           <Header submitForm={this.onSubmit}></Header>
-          <Container fluid className="cardSection">
-                <Row className="w-100">
-                    <TopPicks category={cardCategories.CONTEMPORARY} cards={this.state.fingerprints.filter(card => card.category == cardCategories.CONTEMPORARY)} ></TopPicks>
-                </Row>
-              </Container>
+          <Container fluid className="cardSection p-5">
+            <Switch>
+              <Route
+                path='/home'
+                render={(props) => (
+                  <Gallery fingerprints={this.state.fingerprints} {...props} />
+                )}
+              />
+              <Route path="/card/:id" children={<NFT />} />
+              <Route>{'404'}</Route>
+            </Switch>
+          </Container>
         </div>
     );
   }
