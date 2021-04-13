@@ -2,6 +2,7 @@ import _ from 'lodash'
 import Web3 from 'web3'
 import NFTTokenBean from '../beans/Fingerprint'
 import tokenJSON from '../../abis/Fingerprints.json'
+import IPFS from '../config/ipfs'
 
 class BlockchainInterface {
     constructor() {  
@@ -58,7 +59,7 @@ class BlockchainInterface {
 
     createToken({options}){
 		let payLoad = {
-			account: this.state.account,
+			account: this.account,
 			file: options.file,
 			name: options.tokenName,
 			category: options.tokenCategory,
@@ -66,24 +67,42 @@ class BlockchainInterface {
 			price:  this.web3.utils.toWei(options.tokenCost, 'ether'),
 			uri: options.file
 		  }
-		  this.state.contract.methods.mint(
+		  this.contract.methods.mint(
 			payLoad.account, 
 			payLoad.name,
 			payLoad.category,
 			payLoad.amount,
 			payLoad.price,
 			payLoad.uri,
-			).send({ from: this.state.account })
-		  .once('receipt', (receipt) => {
-	  
-		  })
+			).send({ from: this.account })
+				.once('receipt', (receipt) => {
+			
+				})
     }
 
     getTokens(){
 		return this.tokens
     }
 
-    buyToken(){
+	getFilePath(file){
+		const promise = new Promise((resolve, reject) => {
+			const reader = new window.FileReader()
+			reader.readAsArrayBuffer(file);
+			reader.onloadend = () => {
+				IPFS.files.add(Buffer(reader.result), (error, result) => {
+					if(error) {
+						console.error(error)
+						reject(error)
+					}
+					resolve(result[0].path)
+				})
+			}
+		});
+		
+		return promise
+	}
+
+	 buyToken(){
         
     }
 }

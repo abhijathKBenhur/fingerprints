@@ -1,11 +1,7 @@
-
-
-
 import BlockchainInterface from './interface/BlockchainInterface'
 
 import React, { Component } from 'react';
 import './App.scss';
-import ipfs from './config/ipfs'
 
 import NFTCard from './screens/NFTCard/NFTCard'
 import Gallery from './screens/gallery/gallery'
@@ -15,7 +11,6 @@ import {  Switch, Route } from "react-router-dom";
 
 class App extends Component {
   async componentWillMount() {
-    window.ipfs = ipfs;
     window.BlockchainInterface = BlockchainInterface
     BlockchainInterface.initialize().then(tokens => {
       this.setState({
@@ -33,19 +28,11 @@ class App extends Component {
   }
 
 
-  onSubmit(form) {
-    const reader = new window.FileReader()
-    reader.readAsArrayBuffer(form.file);
-    reader.onloadend = () => {
-      window.ipfs.files.add(Buffer(reader.result), (error, result) => {
-        if(error) {
-          console.error(error)
-          return;
-        }
-        form.file = result[0].path
-        this.BlockchainInterface.createToken({options:form})
-      })
-    }
+  async onSubmit(form) {
+    BlockchainInterface.getFilePath(form.file).then(path => {
+      form.file = path
+      BlockchainInterface.createToken({options:form})
+    })
   }
 
   render() {
