@@ -11,7 +11,6 @@ import {  Switch, Route } from "react-router-dom";
 
 class App extends Component {
   async componentWillMount() {
-    window.BlockchainInterface = BlockchainInterface
     BlockchainInterface.initialize().then(tokens => {
       this.setState({
         tokens
