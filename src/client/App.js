@@ -1,4 +1,5 @@
 import BlockchainInterface from './interface/BlockchainInterface'
+import MongoDBInterface from './interface/MongoDBInterface'
 
 import React, { Component } from 'react';
 import './App.scss';
@@ -11,11 +12,16 @@ import {  Switch, Route } from "react-router-dom";
 
 class App extends Component {
   async componentWillMount() {
-    BlockchainInterface.initialize().then(tokens => {
+    // BlockchainInterface.initialize().then(tokens => {
+    //   this.setState({
+    //     tokens
+    //   })
+    // })
+    MongoDBInterface.getTokens().then(tokens =>{
       this.setState({
-        tokens
+            tokens
+          })
       })
-    })
   }
 
   constructor(props) {
@@ -28,9 +34,13 @@ class App extends Component {
 
 
   async onSubmit(form) {
-    BlockchainInterface.getFilePath(form.file).then(path => {
-      form.file = path
-      BlockchainInterface.createToken({options:form})
+    console.log("submitting")
+    // BlockchainInterface.getFilePath(form.file).then(path => {
+    //   form.file = path
+    //   BlockchainInterface.createToken({options:form})
+    // })
+    MongoDBInterface.addToken(form).then(success =>{
+      console.log(success)
     })
   }
 

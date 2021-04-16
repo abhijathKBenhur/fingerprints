@@ -6,6 +6,7 @@ const router = express.Router()
 
 
 addToken = (req, res) => {
+    console.log("adding token",req.body)
     const body = req.body
 
     if (!body) {
@@ -14,7 +15,6 @@ addToken = (req, res) => {
             error: 'You must provide a token',
         })
     }
-
     const newToken = new Token(body)
 
     if (!newToken) {
@@ -40,6 +40,9 @@ addToken = (req, res) => {
 
 
 getTokenById = async (req, res) => {
+    console.log("Getting tokens")
+    console.log(Token)
+
     await Token.findOne({ _id: req.params.id }, (err, token) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
@@ -48,16 +51,19 @@ getTokenById = async (req, res) => {
         if (!token) {
             return res
                 .status(404)
-                .json({ success: false, error: `token not found` })
+                .json({ success: false, error: `tokens not found` })
         }
         return res.status(200).json({ success: true, data: token })
-    }).catch(err => console.log(err))
+    }).catch(err => {
+        return res.status(200).json({ success: false, data: err })
+    })
 }
 
 getTokens = async (req, res) => {
-    await Movie.find({}, (err, token) => {
+    console.log("Getting tokens")
+    await Token.find({}, (err, token) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(400).json({ success: false, error: "here" })
         }
         if (!token.length) {
             return res
@@ -65,13 +71,15 @@ getTokens = async (req, res) => {
                 .json({ success: false, error: `token not found` })
         }
         return res.status(200).json({ success: true, data: token })
-    }).catch(err => console.log(err))
+    }).catch(err => {
+        return res.status(200).json({ success: false, error: "err" })
+    })
 }
 
 
 router.post('/token', addToken)
-router.put('/movie/:id', getTokenById)
-router.delete('/movie/:id', getTokens)
+router.get('/token/:id', getTokenById)
+router.get('/tokens', getTokens)
 
 
 module.exports = router

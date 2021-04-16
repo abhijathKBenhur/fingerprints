@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require('body-parser')
 const cors = require("cors");
-
+const mongotConnection = require('./db-config/mongodb')
 const tokenAPI = require('./routes/TokenAPIs')
 
 const app = express();

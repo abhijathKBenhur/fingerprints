@@ -9,7 +9,7 @@ const Token = new Schema(
         description: { type: String, required: true },
         cost: { type: Number , required: true},
         supply: { type: Number , required: true},
-        filePath: { type: String , required: true},
+        file: { data: Buffer,contentType: String}
     },
     { timestamps: true },
 )
