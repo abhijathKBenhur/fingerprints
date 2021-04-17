@@ -46,7 +46,7 @@ class App extends Component {
     //   BlockchainInterface.createToken({options:form})
     // })
     MongoDBInterface.getFilePath(form.uri).then(filePath => {
-      form.uri = filePath.data;
+      form.uri = filePath.data.data;
       MongoDBInterface.addToken(form).then(success => {
         this.refreshTokens();
       })
@@ -67,7 +67,6 @@ class App extends Component {
                 )}
               />
               <Route path="/card/:id" children={<NFTCard />} />
-              <Route>{'404'}</Route>
             </Switch>
           </Container>
         </div>
