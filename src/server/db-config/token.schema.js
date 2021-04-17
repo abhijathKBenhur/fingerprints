@@ -3,13 +3,13 @@ const Schema = mongoose.Schema
 
 const Token = new Schema(
     {
-        id: { type: String },
+        account: { type: String },
         name: { type: String, required: true },
         category: { type: String , required: true},
         description: { type: String, required: true },
-        cost: { type: Number , required: true},
-        supply: { type: Number , required: true},
-        file: { data: Buffer,contentType: String}
+        price: { type: Number , required: true},
+        amount: { type: Number , required: true},
+        uri: { type: String ,required: true}
     },
     { timestamps: true },
 )

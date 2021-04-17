@@ -1,29 +1,44 @@
 import axios from 'axios'
-const { uuid } = require('uuidv4');
-
 const api = axios.create({
     baseURL: 'http://localhost:4000/api',
 })
 
 export const addToken = payload => {
-    api.post(`/token`, 
-    {
-        account: this.account,
-        file: payload.file,
-        name: payload.tokenName,
-        category: payload.tokenCategory,
-        amount: parseFloat(payload.tokenSupply),
-        price:  payload.tokenCost,
-        uri: payload.file
+    return api.post(`/token`,{
+        account: "this.account",
+        name: payload.name,
+        category: payload.category,
+        description: payload.description,
+        amount: parseFloat(payload.amount),
+        price:  payload.price,
+        uri: payload.uri
     })
 }
-export const getTokens = () => api.get(`/tokens`)
-export const getTokenById = id => api.get(`/token/${id}`)
+export const getTokens = () =>  { 
+    return api.get(`/tokens`) 
+}
+export const getTokenById = id => { 
+    return api.get(`/token/${id}`) 
+}
+
+export const getFilePath = file => { 
+    let formData = new FormData();
+    formData.append('fileData',file )
+    return axios({
+        method: 'post',
+        url: 'http://localhost:4000/api/getFilePath',
+        data: formData,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+      });
+}
 
 const MongoDBInterface = {
     addToken,
     getTokens,
     getTokenById,
+    getFilePath
 }
 
 export default MongoDBInterface

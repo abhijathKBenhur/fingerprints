@@ -1,6 +1,6 @@
 import BlockchainInterface from './interface/BlockchainInterface'
 import MongoDBInterface from './interface/MongoDBInterface'
-
+import _ from 'lodash'
 import React, { Component } from 'react';
 import './App.scss';
 
@@ -11,17 +11,23 @@ import { Container, Row, Col } from "react-bootstrap";
 import {  Switch, Route } from "react-router-dom";
 
 class App extends Component {
-  async componentWillMount() {
+
+  refreshTokens(){
+    MongoDBInterface.getTokens().then(tokens =>{
+      this.setState({
+            tokens: _.get(tokens,'data.data')
+          })
+      })
+
     // BlockchainInterface.initialize().then(tokens => {
     //   this.setState({
     //     tokens
     //   })
     // })
-    MongoDBInterface.getTokens().then(tokens =>{
-      this.setState({
-            tokens
-          })
-      })
+  }
+
+  async componentWillMount() {
+    this.refreshTokens()
   }
 
   constructor(props) {
@@ -34,14 +40,18 @@ class App extends Component {
 
 
   async onSubmit(form) {
-    console.log("submitting")
+    console.log("submitti",form);
     // BlockchainInterface.getFilePath(form.file).then(path => {
     //   form.file = path
     //   BlockchainInterface.createToken({options:form})
     // })
-    MongoDBInterface.addToken(form).then(success =>{
-      console.log(success)
+    MongoDBInterface.getFilePath(form.uri).then(filePath => {
+      form.uri = filePath.data;
+      MongoDBInterface.addToken(form).then(success => {
+        this.refreshTokens();
+      })
     })
+   
   }
 
   render() {

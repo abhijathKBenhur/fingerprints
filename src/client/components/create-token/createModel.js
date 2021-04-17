@@ -8,12 +8,12 @@ class AddTokenModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tokenName: "",
-      tokenCategory: _.values(cardCategories)[0],
-      tokenDescription: "",
-      tokenCost: 0,
-      tokenSupply: 1,
-      file: undefined,
+      name: "",
+      category: _.values(cardCategories)[0],
+      description: "",
+      price: 0,
+      amount: 1,
+      uri: undefined,
       callback: props.onSubmit
     };
 
@@ -22,7 +22,7 @@ class AddTokenModal extends Component {
 
     this.onDrop = (acceptedFiles) => {
       this.setState({
-        file: Object.assign(acceptedFiles[0], {
+        uri: Object.assign(acceptedFiles[0], {
           preview: URL.createObjectURL(acceptedFiles[0]),
         }),
       });
@@ -59,25 +59,25 @@ class AddTokenModal extends Component {
         </Modal.Header>
         <Modal.Body>
 
-        <Form noValidate onSubmit={this.handleSubmit}>
+        <Form noValidate encType="multipart/form-data" onSubmit={this.handleSubmit}>
           <Form.Row>
             <Form.Group as={Col} md="6">
-              <Form.Group as={Col} md="12" controlId="tokenName">
+              <Form.Group as={Col} md="12" controlId="name">
                 <Form.Label>Name</Form.Label>
                 <Form.Control
                   type="text"
-                  name="tokenName"
+                  name="name"
                   onChange={this.handleChange}
                 />
                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
               </Form.Group>
-              <Form.Group as={Col} md="12" controlId="tokenCategory">
+              <Form.Group as={Col} md="12" controlId="category">
                 <Form.Label>Category</Form.Label>
                 <Form.Control
                   as="select"
                   className="my-1 mr-sm-2"
                   custom
-                  name="tokenCategory"
+                  name="category"
                   onChange={this.handleChange}
                 >
                   {
@@ -89,29 +89,29 @@ class AddTokenModal extends Component {
 
                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
               </Form.Group>
-              <Form.Group as={Col} md="12" controlId="tokenDescription">
+              <Form.Group as={Col} md="12" controlId="description">
                 <Form.Label>Description</Form.Label>
                 <InputGroup hasValidation size="lg">
                   <Form.Control
                     type="textarea"
                     placeholder="Description"
                     aria-describedby="inputGroupAppend"
-                    name="tokenDescription"
+                    name="description"
                     onChange={this.handleChange}
                   />
                 </InputGroup>
               </Form.Group>
-              <Form.Group as={Col} md="12" controlId="tokenCost">
+              <Form.Group as={Col} md="12" controlId="price">
                 <Form.Row>
                   <Form.Group as={Col} md="6">
-                    <Form.Label>Cost</Form.Label>
+                    <Form.Label>Price</Form.Label>
                     <InputGroup className="mb-3">
                       <Form.Control
                         type="number"
                         placeholder="0.0"
                         min={1}
                         aria-label="Amount (ether)"
-                        name="tokenCost"
+                        name="price"
                         onChange={this.handleChange}
                       />
                       <InputGroup.Append>
@@ -119,12 +119,12 @@ class AddTokenModal extends Component {
                       </InputGroup.Append>
                     </InputGroup>
                   </Form.Group>
-                  <Form.Group as={Col} md="6" controlId="tokenSupply">
+                  <Form.Group as={Col} md="6" controlId="amount">
                     <Form.Label>Total Suply</Form.Label>
                     <Form.Control
                       type="number"
                       className="my-1 mr-sm-2"
-                      name="tokenSupply"
+                      name="amount"
                       onChange={this.handleChange}
                     ></Form.Control>
                   </Form.Group>
@@ -135,7 +135,7 @@ class AddTokenModal extends Component {
               <Dropzone onDrop={this.onDrop}  acceptedFiles={".jpeg"} className="dropzoneContainer">
                   {({getRootProps, getInputProps}) => (
                     <section className="container">
-                      {!this.state.file && (
+                      {!this.state.uri && (
                         <div {...getRootProps()} className="dropZone h-100">
                           <input {...getInputProps()} />
                           <p>Drop files here</p>
@@ -144,9 +144,9 @@ class AddTokenModal extends Component {
                     </section>
                   )}
                 </Dropzone>
-                {this.state.file && (
+                {this.state.uri && (
                   <img
-                    src={this.state.file.preview}
+                    src={this.state.uri.preview}
                     alt="preview"
                     className="droppedImage"
                     style={{width:'90%'}}

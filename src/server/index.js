@@ -7,11 +7,9 @@ const tokenAPI = require('./routes/TokenAPIs')
 const app = express();
 const PORT = 4000;
 
-
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors())
 app.use(bodyParser.json())
-
 
 
 app.use('/api', tokenAPI)

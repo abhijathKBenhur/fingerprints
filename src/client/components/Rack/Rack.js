@@ -25,7 +25,7 @@ const Rack = (props) => {
                         </Card.Body>
                         <Card.Footer>
                             {/* <small className="text-muted">{fingerprint.supply} In supply</small> */}
-                            <small className="text-muted">{fingerprint.cost} ETH</small>
+                            <small className="text-muted">{fingerprint.price} ETH</small>
                         </Card.Footer>
                     </Card>
                 )})}
