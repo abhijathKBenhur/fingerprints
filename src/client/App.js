@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import './App.scss';
 
 import NFTCard from './screens/NFTCard/NFTCard'
-import Gallery from './screens/gallery/gallery'
+import Gallery from './screens/Gallery/gallery'
 import Header from './components/header/header'
 import { Container, Row, Col } from "react-bootstrap";
 import {  Switch, Route } from "react-router-dom";
@@ -38,9 +38,18 @@ class App extends Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
+  async submitLoginForm(data){
+    let userInfo = _.get(data,'data.data.userName')
+    debugger;
+    if(data.login){
+      console.log("logged in ", )
+      localStorage.setItem("userInfo",userInfo)
+    }else if(data.signup){
+      localStorage.setItem("userInfo",userInfo)
+    }
+  }
 
   async onSubmit(form) {
-    console.log("submitti",form);
     // BlockchainInterface.getFilePath(form.file).then(path => {
     //   form.file = path
     //   BlockchainInterface.createToken({options:form})
@@ -57,7 +66,7 @@ class App extends Component {
   render() {
     return (
         <div className="appContainer">
-          <Header submitForm={this.onSubmit}></Header>
+          <Header submitForm={this.onSubmit} submitLoginForm={this.submitLoginForm}></Header>
           <Container fluid className="cardSection p-5">
             <Switch>
               <Route

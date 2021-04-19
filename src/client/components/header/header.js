@@ -2,21 +2,27 @@ import React ,{useState} from "react";
 import { Button, Dropdown, Image } from "react-bootstrap";
 import { useHistory } from 'react-router-dom';
 import logo from "../../../assets/logo/Fingerprints.png";
-import AddTokenModal from "../create-token/createModel";
-
+import AddTokenModal from "../../modals/create-token/createModel";
+import LoginModal from "../../modals/login-modal/loginModal";
+import _ from 'lodash'
 const Header = (props) => {
   let history = useHistory();
-  const [showModal, setShowModal] = useState(false);
-  function gotoGallery(){
-    history.push('/home')
+  function logoutUser(){
+    console.log("logging out")
+    localStorage.removeItem("userInfo");
+    // setLoggedUserInfo(undefined)
   }
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  // const [loggedUserInfo, setLoggedUserInfo] = useState(undefined);
+
   const ProfileDropDown = React.forwardRef(({ children, onClick }, ref) => (
     <a
       href= ""
       ref={ref}
       onClick={(e) => {
         e.preventDefault();
-        gotoGallery(e);
+        onClick(e);
       }}
     >
       <Image
@@ -30,11 +36,18 @@ const Header = (props) => {
 
   return (
     <div>
-      <AddTokenModal
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        onSubmit={props.submitForm}
-      ></AddTokenModal>
+    <LoginModal
+      show={showLoginModal}
+      onHide={() => setShowLoginModal(false)}
+      onSubmit={props.submitLoginForm}
+    ></LoginModal>
+
+
+    <AddTokenModal
+      show={showCreateModal}
+      onHide={() => setShowCreateModal(false)}
+      onSubmit={props.submitForm}
+    ></AddTokenModal>
       <nav className="navbar navbar-light bg-light flex-md-nowrap shadow">
         <a className="navbar-brand" target="_blank" rel="noopener noreferrer">
           <img src={logo} width="70" height="70" alt=""></img>
@@ -55,7 +68,7 @@ const Header = (props) => {
             variant="outline-danger"
             className="nav-button create-token"
             type="button"
-            onClick={() => setShowModal(true)}
+            onClick={() => setShowCreateModal(true)}
           >
             Create
           </Button>
@@ -75,7 +88,11 @@ const Header = (props) => {
           <Dropdown.Menu>
             <Dropdown.Item eventKey="1">Portfolio</Dropdown.Item>
             <Dropdown.Item eventKey="2">Settings</Dropdown.Item>
-            <Dropdown.Item eventKey="1">Logout</Dropdown.Item>
+            {!_.isEmpty(localStorage.getItem("userInfo")) ?
+            <Dropdown.Item eventKey="1" onClick={ () =>{logoutUser()} }>Logout</Dropdown.Item>
+            :
+            <Dropdown.Item eventKey="1" onClick={() => setShowLoginModal(true)}>Login</Dropdown.Item>
+            }
           </Dropdown.Menu>
         </Dropdown>
       </nav>

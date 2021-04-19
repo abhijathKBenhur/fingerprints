@@ -3,9 +3,26 @@ const api = axios.create({
     baseURL: 'http://localhost:4000/api',
 })
 
+
+export const signup = payload => {
+    return api.post(`/signup`,{
+        userName: payload.userName,
+        password: payload.password,
+    })
+}
+
+
+export const login = payload => {
+    return api.post(`/login`,{
+        userName: payload.userName,
+        password: payload.password,
+    })
+}
+
+
 export const addToken = payload => {
     return api.post(`/token`,{
-        account: "this.account",
+        account: localStorage.getItem("userInfo"),
         name: payload.name,
         category: payload.category,
         description: payload.description,
@@ -14,8 +31,8 @@ export const addToken = payload => {
         uri: payload.uri
     })
 }
-export const getTokens = () =>  { 
-    return api.get(`/tokens`) 
+export const getTokens = (payload) =>  { 
+    return api.post(`/tokens`,payload) 
 }
 export const getTokenById = id => { 
     return api.get(`/token/${id}`) 
@@ -38,7 +55,9 @@ const MongoDBInterface = {
     addToken,
     getTokens,
     getTokenById,
-    getFilePath
+    getFilePath,
+    signup,
+    login
 }
 
 export default MongoDBInterface
