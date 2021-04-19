@@ -39,8 +39,37 @@ addToken = (req, res) => {
 }
 
 
+buyToken = async (req, res) => {
+    console.log("Buying token", req.body);
+    let buyer = req.body.buyer
+    let buyTokenId = req.body._id
+
+    const filter = { _id: buyTokenId };
+    const update = { owner: buyer };
+    console.log("here:" + buyTokenId)
+    await Token.findByIdAndUpdate(buyTokenId, update , (err, token) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+
+        if (!token) {
+            return res
+                .status(404)
+                .json({ success: true, data: [] })
+        }
+        // change token owner
+        // reduce buyer ETH
+        // increase seller ETH
+        console.log("calling buy api")
+        return res.status(200).json({ success: true, data: token })
+    }).catch(err => {
+        return res.status(200).json({ success: false, data: err })
+    })
+}
+
+
 getTokenById = async (req, res) => {
-    console.log("Getting tokens")
+    console.log("Getting token")
     console.log(Token)
 
     await Token.findOne({ _id: req.params.id }, (err, token) => {
@@ -60,8 +89,12 @@ getTokenById = async (req, res) => {
 }
 
 getTokens = async (req, res) => {
-    console.log("Getting tokens")
-    await Token.find({}, (err, token) => {
+    console.log("Getting tokens for ", req.body.userName)
+    payLoad = {};
+    if(req.body.userName){
+        payLoad.userName = req.body.userName
+    }
+    await Token.find(payLoad, (err, token) => {
         if (err) {
             return res.status(400).json({ success: false, error: "here" })
         }
@@ -86,7 +119,7 @@ const storage = multer.diskStorage({
   // Init Upload
   const upload = multer({
     storage: storage,
-    limits:{fileSize: 1000000},
+    limits:{fileSize: 5000000},
     fileFilter: function(req, file, cb){
       checkFileType(file, cb);
     }
@@ -109,7 +142,9 @@ const storage = multer.diskStorage({
   }
 
 getFilePath = async (req, res) => {
+    console.log("getting file path")
     upload(req, res, (err) => {
+        console.log(err)
       if(err){
         return res.status(200).json({ success: false, error: "err" })
       } else {
@@ -127,6 +162,7 @@ getFilePath = async (req, res) => {
 router.post('/getFilePath', getFilePath)
 router.post('/token', addToken)
 router.get('/token/:id', getTokenById)
-router.get('/tokens', getTokens)
+router.post('/tokens', getTokens)
+router.post('/buyToken', buyToken)
 
 module.exports = router

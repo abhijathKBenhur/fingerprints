@@ -23,6 +23,7 @@ export const login = payload => {
 export const addToken = payload => {
     return api.post(`/token`,{
         account: localStorage.getItem("userInfo"),
+        owner: localStorage.getItem("userInfo"),
         name: payload.name,
         category: payload.category,
         description: payload.description,
@@ -32,7 +33,8 @@ export const addToken = payload => {
     })
 }
 export const getTokens = (payload) =>  { 
-    return api.post(`/tokens`,payload) 
+    // return api.post("/tokens",payload) 
+    return api.post("/tokens",payload) 
 }
 export const getTokenById = id => { 
     return api.get(`/token/${id}`) 
@@ -51,13 +53,25 @@ export const getFilePath = file => {
       });
 }
 
+export const buyToken = payload => { 
+    return api.post(`/buyToken`,payload) 
+}
+
+
+export const buyUserToken = payload => { 
+    return api.post(`/buyUserToken`,payload) 
+}
+
+
 const MongoDBInterface = {
     addToken,
     getTokens,
     getTokenById,
     getFilePath,
     signup,
-    login
+    login,
+    buyToken,
+    buyUserToken
 }
 
 export default MongoDBInterface

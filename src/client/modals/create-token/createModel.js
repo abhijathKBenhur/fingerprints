@@ -48,7 +48,7 @@ class AddTokenModal extends Component {
     return (
       <Modal
         {...this.props}
-        size="md"
+        size="lg"
         aria-labelledby="contained-modal-title-vcenter"
         centered
       >

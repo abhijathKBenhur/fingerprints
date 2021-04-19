@@ -14,7 +14,7 @@ const Rack = (props) => {
                 {props.cards.map((fingerprint,index) => {
                     return (
                     <Card key={index} onClick={() =>{
-                         openCardView(fingerprint.title)
+                         openCardView(fingerprint._id)
                     }}>
                         <Card.Img variant="top" src={"https://source.unsplash.com/random/200x200?sig="+2} />
                         <Card.Body>

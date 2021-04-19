@@ -36,8 +36,44 @@ signup = (req, res) => {
         })
 }
 
+buyUserToken = async (req, res) => {
+    console.log("Buying token", req.account);
+    let buyer = req.body.buyer
+    let value = req.body.price
+
+    await User.findOneAndUpdate({ userName: req.body.account},{$inc : {balance : value}}, (err, user) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!user) {
+            return res
+                .status(404)
+                .json({ success: true, data: [] })
+        }
+        return res.status(200).json({ success: true, data: user })
+    }).catch(err => {
+        return res.status(200).json({ success: false, data: err })
+    })
+
+  
+
+    await User.findOneAndUpdate({ userName: buyer},{$inc : {balance : - value}}, (err, user) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!user) {
+            return res
+                .status(404)
+                .json({ success: true, data: [] })
+        }
+        return res.status(200).json({ success: true, data: user })
+    }).catch(err => {
+        return res.status(200).json({ success: false, data: err })
+    })
+}
+
 getUserInfo = async (req, res) => {
-    await User.findOne({ id: req.body.userName }, (err, user) => {
+    await User.findOne({ userName: req.body.userName }, (err, user) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
@@ -74,5 +110,8 @@ login = async (req, res) => {
 
 router.post('/signup', signup)
 router.post('/login', login)
+router.post('/buyUserToken', buyUserToken)
+
+
 
 module.exports = router

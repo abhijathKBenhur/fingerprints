@@ -7,10 +7,10 @@ import LoginModal from "../../modals/login-modal/loginModal";
 import _ from 'lodash'
 const Header = (props) => {
   let history = useHistory();
+
   function logoutUser(){
     console.log("logging out")
     localStorage.removeItem("userInfo");
-    // setLoggedUserInfo(undefined)
   }
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);

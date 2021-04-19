@@ -3,7 +3,8 @@ const Schema = mongoose.Schema
 
 const Token = new Schema(
     {
-        account: { type: String },
+        account: { type: String , required: true },
+        owner: { type: String, required: true },
         name: { type: String, required: true },
         category: { type: String , required: true},
         description: { type: String, required: true },

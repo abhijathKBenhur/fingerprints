@@ -12,6 +12,8 @@ import {  Switch, Route } from "react-router-dom";
 
 class App extends Component {
 
+ 
+
   refreshTokens(){
     MongoDBInterface.getTokens().then(tokens =>{
       this.setState({
@@ -40,7 +42,6 @@ class App extends Component {
 
   async submitLoginForm(data){
     let userInfo = _.get(data,'data.data.userName')
-    debugger;
     if(data.login){
       console.log("logged in ", )
       localStorage.setItem("userInfo",userInfo)
