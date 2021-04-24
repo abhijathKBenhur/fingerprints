@@ -62,6 +62,10 @@ export const buyUserToken = payload => {
     return api.post(`/buyUserToken`,payload) 
 }
 
+export const getUserInfo = payload => { 
+    return api.post(`/getUserInfo`,payload) 
+}
+
 
 const MongoDBInterface = {
     addToken,
@@ -71,7 +75,8 @@ const MongoDBInterface = {
     signup,
     login,
     buyToken,
-    buyUserToken
+    buyUserToken,
+    getUserInfo
 }
 
 export default MongoDBInterface

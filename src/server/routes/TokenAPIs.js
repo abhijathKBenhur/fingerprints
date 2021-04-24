@@ -92,7 +92,7 @@ getTokens = async (req, res) => {
     console.log("Getting tokens for ", req.body.userName)
     payLoad = {};
     if(req.body.userName){
-        payLoad.userName = req.body.userName
+        payLoad.owner = req.body.userName
     }
     await Token.find(payLoad, (err, token) => {
         if (err) {
@@ -110,7 +110,7 @@ getTokens = async (req, res) => {
 }
 
 const storage = multer.diskStorage({
-    destination: './src/uploads/',
+    destination: './public/uploads/',
     filename: function(req, file, cb){
       cb(null,file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
@@ -151,7 +151,7 @@ getFilePath = async (req, res) => {
         if(req.file == undefined){
             return res.status(200).json({ success: false, error: "no file selected" })
         } else {
-            return res.status(200).json({ success: true, data: "/src/uploads/"+req.file.filename })
+            return res.status(200).json({ success: true, data: "/uploads/"+req.file.filename })
         }
       }
     });

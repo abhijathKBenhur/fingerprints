@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Image, Button, Row, Col, Form, Container } from "react-bootstrap";
+import { Card, Row, Col, Form, Container } from "react-bootstrap";
 import MongoDBInterface from '../../interface/MongoDBInterface';
+import { confirm } from "../../modals/confirmation/confirmation"
+
 import {
     useParams
   } from "react-router-dom";
 import { useHistory } from 'react-router-dom';
 import _ from 'lodash'
+import { Share2, ShoppingCart, Feather, User, AlignLeft } from 'react-feather';
+import './NFTCard.scss'
+
 
 const NFT = () => {
     let history = useHistory();
@@ -19,94 +24,66 @@ const NFT = () => {
 
 
     let { id } = useParams();
-    function gotoGallery(){
-        history.push('/home')
-    }
+    
 
     function buyToken(){
-        let buyerAccount = localStorage.getItem("userInfo")
-        MongoDBInterface.buyToken({buyer: buyerAccount,...token}).then(token => {
-            setToken(_.get(token,'data.data'))
-            MongoDBInterface.buyUserToken({buyer: buyerAccount,..._.get(token,'data.data')})
-        })
+        if (confirm("Are your sure?","Buy Token")) {
+            let buyerAccount = localStorage.getItem("userInfo")
+            MongoDBInterface.buyToken({buyer: buyerAccount,...token}).then(token => {
+                setToken(_.get(token,'data.data'))
+                MongoDBInterface.buyUserToken({buyer: buyerAccount,..._.get(token,'data.data')})
+            })
+          } else {
+            console.log("cancelled buy")
+          }
     }
 
     return (
-        <Container fluid >
+        <Container className="cardView">
             <Row>
-                <Col md="4">
-                    <Image src={"https://source.unsplash.com/random/500x500?sig="+2} fluid />
-                </Col>
-                <Col md="8" className="imageContainer">
-                    <Col md={12}>
-                        <Row>
-                            <Col md={12}>
-                                <Row>
-                                    <Col md={2}>
-                                        Name :
-                                    </Col>
-                                    <Col md={10}>
-                                        {token.name}
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md={2}>
-                                        Owner :
-                                    </Col>
-                                    <Col md={10}>
-                                        {token.owner}
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md={2}>
-                                        Category :
-                                    </Col>
-                                    <Col md={10}>
-                                        {token.category}
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md={2}>
-                                        Description :
-                                    </Col>
-                                    <Col md={10}>
-                                        {token.description}
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md={2}>
-                                        Cost :
-                                    </Col>
-                                    <Col md={10}>
-                                        {token.price}
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md={2}>
-                                        Units in stock
-                                    </Col>
-                                    <Col md={10}>
-                                        {token.amount}
-                                    </Col>
-                                </Row>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col md={12}>
-                                <Button variant="dark" onClick={()=> gotoGallery()}>
-                                    Back
-                                </Button>
+                <Col md="3"></Col>
+                <Col md="5">
+                    <Card className="">
+                        <Card.Footer>
+                            <div className="d-flex justify-content-between">
+                                <small className="text-muted">{token.price} ETH</small>
+                                <div>
                                 {
                                 token.owner != localStorage.getItem("userInfo") ? 
-                                    <Button variant="danger" value="Submit" onClick={()=> buyToken()}>
-                                    Buy
-                                    </Button> : ""
+                                    <Share2></Share2>
+                                    : 
+                                    <ShoppingCart onClick={()=> buyToken()}></ShoppingCart>
                                 }
-                                
-                            </Col>
-                        </Row>
-                    </Col>
+                                </div>
+                            </div>
+                        </Card.Footer>
+                        <Card.Img variant="top" src={token.uri} />
+                        <Card.Body>
+                            <div className="d-flex justify-content-between">
+                                <Card.Title>{token.name}</Card.Title>
+                                <Card.Text  className="d-flex align-items-center">
+                                    {token.owner}
+                                    <Feather size={15} className="ml-2"></Feather>
+                                </Card.Text>
+                            </div>
+                           
+                            <div className="d-flex justify-content-between">
+                                <Card.Text>
+                                    {token.category}
+                                </Card.Text>
+                                <Card.Text  className="d-flex align-items-center">
+                                    {token.account}
+                                    <User size={15} className="ml-2"></User>
+                                </Card.Text>
+                            </div>
+                            
+                        </Card.Body>
+                        <Card.Footer>
+                             {token.description}    
+                        </Card.Footer>
+                    </Card>
                 </Col>
+                
             </Row>
         </Container>
     );

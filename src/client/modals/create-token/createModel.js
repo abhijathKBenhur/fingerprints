@@ -120,13 +120,13 @@ class AddTokenModal extends Component {
                     </InputGroup>
                   </Form.Group>
                   <Form.Group as={Col} md="6" controlId="amount">
-                    <Form.Label>Total Suply</Form.Label>
+                    {/* <Form.Label>Total Suply</Form.Label>
                     <Form.Control
                       type="number"
                       className="my-1 mr-sm-2"
                       name="amount"
                       onChange={this.handleChange}
-                    ></Form.Control>
+                    ></Form.Control> */}
                   </Form.Group>
                 </Form.Row>
               </Form.Group>

@@ -111,6 +111,7 @@ login = async (req, res) => {
 router.post('/signup', signup)
 router.post('/login', login)
 router.post('/buyUserToken', buyUserToken)
+router.post('/getUserInfo', getUserInfo)
 
 
 

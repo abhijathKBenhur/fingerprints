@@ -1,7 +1,7 @@
 const cardCategories = {
-    CONTEMPORARY: "CONTEMPORARY",
-    MORDERN: "MORDERN",
-    ABSTRACT: "ABSTRACT",
+    CONTEMPORARY: "Contemporary",
+    MORDERN: "Mordern",
+    ABSTRACT: "Abstract",
 }
 
 export default cardCategories

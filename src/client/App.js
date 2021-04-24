@@ -6,6 +6,7 @@ import './App.scss';
 
 import NFTCard from './screens/NFTCard/NFTCard'
 import Gallery from './screens/Gallery/gallery'
+import Profile from './screens/Profile/profile'
 import Header from './components/header/header'
 import { Container, Row, Col } from "react-bootstrap";
 import {  Switch, Route } from "react-router-dom";
@@ -77,6 +78,7 @@ class App extends Component {
                 )}
               />
               <Route path="/card/:id" children={<NFTCard />} />
+              <Route path="/profile" children={<Profile />} />
             </Switch>
           </Container>
         </div>

@@ -5,12 +5,20 @@ import logo from "../../../assets/logo/Fingerprints.png";
 import AddTokenModal from "../../modals/create-token/createModel";
 import LoginModal from "../../modals/login-modal/loginModal";
 import _ from 'lodash'
+import {  User } from 'react-feather';
 const Header = (props) => {
   let history = useHistory();
 
   function logoutUser(){
     console.log("logging out")
     localStorage.removeItem("userInfo");
+  }
+  function gotoGallery(){
+        history.push('/home')
+    }
+
+  function gotoPortfolio(){
+    history.push('/profile')
   }
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -25,12 +33,7 @@ const Header = (props) => {
         onClick(e);
       }}
     >
-      <Image
-        src="http://pathfindersacademypune.com/profile/53FFLTTds4.png"
-        width="35"
-        height="35"
-        roundedCircle
-      />
+      <User size={40} color="black"></User>
     </a>
   ));
 
@@ -50,7 +53,7 @@ const Header = (props) => {
     ></AddTokenModal>
       <nav className="navbar navbar-light bg-light flex-md-nowrap shadow">
         <a className="navbar-brand" target="_blank" rel="noopener noreferrer">
-          <img src={logo} width="70" height="70" alt=""></img>
+          <img src={logo} width="70" height="70" alt="" onClick={()=> gotoGallery()}></img>
         </a>
 
         {/* <InputGroup >
@@ -86,7 +89,7 @@ const Header = (props) => {
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            <Dropdown.Item eventKey="1">Portfolio</Dropdown.Item>
+            <Dropdown.Item eventKey="1"  onClick={ () =>{gotoPortfolio()} }>Profile</Dropdown.Item>
             <Dropdown.Item eventKey="2">Settings</Dropdown.Item>
             {!_.isEmpty(localStorage.getItem("userInfo")) ?
             <Dropdown.Item eventKey="1" onClick={ () =>{logoutUser()} }>Logout</Dropdown.Item>
