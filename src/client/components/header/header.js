@@ -6,19 +6,30 @@ import AddTokenModal from "../../modals/create-token/createModel";
 import LoginModal from "../../modals/login-modal/loginModal";
 import _ from 'lodash'
 import {  User } from 'react-feather';
+import {  toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 const Header = (props) => {
   let history = useHistory();
 
   function logoutUser(){
     console.log("logging out")
     localStorage.removeItem("userInfo");
+    window.location.reload();
   }
   function gotoGallery(){
-        history.push('/home')
-    }
+      history.push('/home')
+  }
 
   function gotoPortfolio(){
     history.push('/profile')
+  }
+
+
+  function connectWallet(){
+    toast("Wow so easy !")
+    debugger;
   }
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -79,6 +90,7 @@ const Header = (props) => {
             variant="outline-dark"
             className="nav-button connect-wallet"
             type="button"
+            onClick={() => {connectWallet()}}
           >
             Connect Wallet
           </Button>
@@ -94,7 +106,7 @@ const Header = (props) => {
             {!_.isEmpty(localStorage.getItem("userInfo")) ?
             <Dropdown.Item eventKey="1" onClick={ () =>{logoutUser()} }>Logout</Dropdown.Item>
             :
-            <Dropdown.Item eventKey="1" onClick={() => setShowLoginModal(true)}>Login</Dropdown.Item>
+            <Dropdown.Item eventKey="1" onClick={() => {setShowLoginModal(true)}}>Login</Dropdown.Item>
             }
           </Dropdown.Menu>
         </Dropdown>

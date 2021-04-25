@@ -10,7 +10,6 @@ import Profile from './screens/Profile/profile'
 import Header from './components/header/header'
 import { Container, Row, Col } from "react-bootstrap";
 import {  Switch, Route } from "react-router-dom";
-
 class App extends Component {
 
  
@@ -49,6 +48,7 @@ class App extends Component {
     }else if(data.signup){
       localStorage.setItem("userInfo",userInfo)
     }
+    window.location.reload();
   }
 
   async onSubmit(form) {

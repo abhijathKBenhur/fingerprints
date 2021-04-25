@@ -28,6 +28,7 @@ const NFT = () => {
 
     function buyToken(){
         if (confirm("Are your sure?","Buy Token")) {
+            console.log("buying")
             let buyerAccount = localStorage.getItem("userInfo")
             MongoDBInterface.buyToken({buyer: buyerAccount,...token}).then(token => {
                 setToken(_.get(token,'data.data'))

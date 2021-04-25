@@ -16,7 +16,7 @@ class Confirmation extends React.Component {
       enableEscape = true
     } = this.props;
     return (
-      <div className="static-modal">
+      <div className="static-modal confirmation-popup">
         <Modal
           show={show}
           onHide={() => proceed(false)}

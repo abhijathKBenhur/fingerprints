@@ -38,9 +38,15 @@ class AddTokenModal extends Component {
     this.setState(stateObject)
   }
 
+  closePopup(){
+    
+  }
+
   handleSubmit(event) {
     event.preventDefault();
     this.props.onHide()
+    let stateCopy = _.clone(this.state);
+    this.setState({uri:undefined})
     this.state.callback(this.state)
   }
 
