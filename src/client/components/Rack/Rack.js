@@ -12,13 +12,14 @@ const Rack = (props) => {
     return (
         <div  className="mt-4">
             <h3 className="rackTitle">{props.category}</h3>
-            <CardDeck>
+            <hr></hr>
+            <CardDeck className="cardDeck">
                 {props.cards.map((fingerprint,index) => {
                     return (
                     <Card key={index} className="tokenCard" onClick={() =>{
                          openCardView(fingerprint._id)
                     }}>
-                        <Card.Img variant="top" src={window.location.origin+fingerprint.uri} />
+                        <Card.Img className="tokenCardImage" variant="top" src={window.location.origin+fingerprint.uri} />
                         <Card.Body className="rack-card-body">
                             <div className="d-flex justify-content-between">
                                 <Card.Title>{fingerprint.name}</Card.Title>

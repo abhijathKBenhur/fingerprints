@@ -6,6 +6,7 @@ import AddTokenModal from "../../modals/create-token/createModel";
 import LoginModal from "../../modals/login-modal/loginModal";
 import _ from 'lodash'
 import {  User } from 'react-feather';
+import './header.scss'
 import {  toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -16,6 +17,15 @@ const Header = (props) => {
   function logoutUser(){
     console.log("logging out")
     localStorage.removeItem("userInfo");
+    toast.error('Logged out!', {
+      position: "bottom-right",
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      });
     window.location.reload();
   }
   function gotoGallery(){
@@ -28,8 +38,7 @@ const Header = (props) => {
 
 
   function connectWallet(){
-    toast("Wow so easy !")
-    debugger;
+    
   }
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -62,7 +71,8 @@ const Header = (props) => {
       onHide={() => setShowCreateModal(false)}
       onSubmit={props.submitForm}
     ></AddTokenModal>
-      <nav className="navbar navbar-light bg-light flex-md-nowrap shadow">
+    
+      <nav className="navbar navbar-light bg-light flex-md-nowrap shadow appHeader">
         <a className="navbar-brand" target="_blank" rel="noopener noreferrer">
           <img src={logo} width="70" height="70" alt="" onClick={()=> gotoGallery()}></img>
         </a>

@@ -37,28 +37,16 @@ signup = (req, res) => {
 }
 
 buyUserToken = async (req, res) => {
-    console.log("Buying token", req.account);
+    console.log("Buying token", req.body.account);
     let buyer = req.body.buyer
     let value = req.body.price
+    let referrer = req.body.referrer
 
-    await User.findOneAndUpdate({ userName: req.body.account},{$inc : {balance : value}}, (err, user) => {
-        if (err) {
-            return res.status(400).json({ success: false, error: err })
-        }
-        if (!user) {
-            return res
-                .status(404)
-                .json({ success: true, data: [] })
-        }
-        return res.status(200).json({ success: true, data: user })
-    }).catch(err => {
-        return res.status(200).json({ success: false, data: err })
-    })
-
-  
 
     await User.findOneAndUpdate({ userName: buyer},{$inc : {balance : - value}}, (err, user) => {
+        console.log("Debitting token", value);
         if (err) {
+            console.log("Error Debitting token", value);
             return res.status(400).json({ success: false, error: err })
         }
         if (!user) {
@@ -66,10 +54,48 @@ buyUserToken = async (req, res) => {
                 .status(404)
                 .json({ success: true, data: [] })
         }
+        console.log(" Debitted token", value);
         return res.status(200).json({ success: true, data: user })
     }).catch(err => {
         return res.status(200).json({ success: false, data: err })
     })
+
+
+    await User.findOneAndUpdate({ userName: req.body.account},{$inc : {balance : value * 0.75}}, (err, user) => {
+        console.log("Crediting token", value);
+        if (err) {
+            console.log("Error Crediting token", value);
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!user) {
+            return res
+                .status(404)
+                .json({ success: true, data: [] })
+        }
+        console.log(" Credited token", value);
+        return res.status(200).json({ success: true, data: user })
+    }).catch(err => {
+        return res.status(200).json({ success: false, data: err })
+    })
+
+    await User.findOneAndUpdate({ userName: referrer},{$inc : {balance : value * 0.25}}, (err, user) => {
+        console.log("Crediting incentive", value);
+        if (err) {
+            console.log("Error Crediting incentive", value);
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!user) {
+            return res
+                .status(404)
+                .json({ success: true, data: [] })
+        }
+        console.log(" Credited incentive", value);
+        return res.status(200).json({ success: true, data: user })
+    }).catch(err => {
+        return res.status(200).json({ success: false, data: err })
+    })
+
+    
 }
 
 getUserInfo = async (req, res) => {

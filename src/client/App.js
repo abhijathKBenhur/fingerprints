@@ -10,6 +10,8 @@ import Profile from './screens/Profile/profile'
 import Header from './components/header/header'
 import { Container, Row, Col } from "react-bootstrap";
 import {  Switch, Route } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+
 class App extends Component {
 
  
@@ -48,6 +50,15 @@ class App extends Component {
     }else if(data.signup){
       localStorage.setItem("userInfo",userInfo)
     }
+    toast.dark('Welcome ' + localStorage.getItem("userInfo") +" !", {
+      position: "bottom-right",
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      });
     window.location.reload();
   }
 
@@ -68,6 +79,7 @@ class App extends Component {
   render() {
     return (
         <div className="appContainer">
+          <ToastContainer></ToastContainer>
           <Header submitForm={this.onSubmit} submitLoginForm={this.submitLoginForm}></Header>
           <Container fluid className="cardSection p-5">
             <Switch>

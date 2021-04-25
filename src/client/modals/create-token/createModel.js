@@ -45,9 +45,16 @@ class AddTokenModal extends Component {
   handleSubmit(event) {
     event.preventDefault();
     this.props.onHide()
-    let stateCopy = _.clone(this.state);
-    this.setState({uri:undefined})
-    this.state.callback(this.state)
+    let stateCopy = _.cloneDeep(this.state);
+    this.setState({
+      name: "",
+      category: _.values(cardCategories)[0],
+      description: "",
+      price: 0,
+      amount: 1,
+      uri: undefined,
+    });
+    this.state.callback(stateCopy)
   }
 
   render() {

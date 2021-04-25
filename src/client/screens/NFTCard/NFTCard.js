@@ -2,41 +2,63 @@ import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Form, Container } from "react-bootstrap";
 import MongoDBInterface from '../../interface/MongoDBInterface';
 import { confirm } from "../../modals/confirmation/confirmation"
-
-import {
-    useParams
-  } from "react-router-dom";
+import { useParams,useLocation } from "react-router-dom";
 import { useHistory } from 'react-router-dom';
 import _ from 'lodash'
 import { Share2, ShoppingCart, Feather, User, AlignLeft } from 'react-feather';
 import './NFTCard.scss'
+import {  toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-
-const NFT = () => {
+const NFT = (props) => {
     let history = useHistory();
     const [token, setToken] = useState({});
+    const location = useLocation()
+    let referrer  = new URLSearchParams(location.search).get("referrer");
 
     useEffect(() => {
+       
         MongoDBInterface.getTokenById(id).then(token => {
             setToken(_.get(token,'data.data'));
         })
     }, []); // call the method once
 
-
     let { id } = useParams();
     
+    function copyURL(){
+        let shareURL = window.location.href + "?referrer="+ localStorage.getItem("userInfo")
+        navigator.clipboard.writeText(shareURL)
+        toast.dark('Copied to clipboard!', {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    }
 
     function buyToken(){
-        if (confirm("Are your sure?","Buy Token")) {
+        // if (confirm("Are your sure?","Buy Token")) {
             console.log("buying")
             let buyerAccount = localStorage.getItem("userInfo")
-            MongoDBInterface.buyToken({buyer: buyerAccount,...token}).then(token => {
-                setToken(_.get(token,'data.data'))
-                MongoDBInterface.buyUserToken({buyer: buyerAccount,..._.get(token,'data.data')})
+            MongoDBInterface.buyToken({buyer: buyerAccount,...token}).then(tokenResponse => {
+                setToken(_.get(tokenResponse,'data.data'))
+                MongoDBInterface.buyUserToken({buyer: buyerAccount,referrer:referrer,..._.get(tokenResponse,'data.data')})
+                toast.dark('You just bought!' + tokenResponse.name, {
+                    position: "bottom-right",
+                    autoClose: 3000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             })
-          } else {
-            console.log("cancelled buy")
-          }
+        //   } else {
+        //     console.log("cancelled buy")
+        //   }
     }
 
     return (
@@ -51,9 +73,9 @@ const NFT = () => {
                                 <div>
                                 {
                                 token.owner != localStorage.getItem("userInfo") ? 
-                                    <Share2></Share2>
-                                    : 
-                                    <ShoppingCart onClick={()=> buyToken()}></ShoppingCart>
+                                <ShoppingCart onClick={()=> buyToken()}></ShoppingCart>
+                                :
+                                <Share2 onClick={()=> copyURL()}></Share2> 
                                 }
                                 </div>
                             </div>
