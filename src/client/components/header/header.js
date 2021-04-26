@@ -1,12 +1,49 @@
-import React, { useState } from "react";
+import React ,{useState} from "react";
 import { Button, Dropdown, Image } from "react-bootstrap";
-
-// custom components
+import { useHistory } from 'react-router-dom';
 import logo from "../../../assets/logo/Fingerprints.png";
-import AddTokenModal from "../create-token/createModel";
+import AddTokenModal from "../../modals/create-token/createModel";
+import LoginModal from "../../modals/login-modal/loginModal";
+import _ from 'lodash'
+import {  User } from 'react-feather';
+import './header.scss'
+import {  toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Header = (props) => {
-  const [showModal, setShowModal] = useState(false);
+  let history = useHistory();
+
+  function logoutUser(){
+    console.log("logging out")
+    localStorage.removeItem("userInfo");
+    toast.error('Logged out!', {
+      position: "bottom-right",
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      });
+    window.location.reload();
+  }
+  function gotoGallery(){
+      history.push('/home')
+  }
+
+  function gotoPortfolio(){
+    history.push('/profile')
+  }
+
+
+  function connectWallet(){
+    
+  }
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  // const [loggedUserInfo, setLoggedUserInfo] = useState(undefined);
+
   const ProfileDropDown = React.forwardRef(({ children, onClick }, ref) => (
     <a
       href= ""
@@ -16,24 +53,28 @@ const Header = (props) => {
         onClick(e);
       }}
     >
-      <Image
-        src="http://pathfindersacademypune.com/profile/53FFLTTds4.png"
-        width="35"
-        height="35"
-        roundedCircle
-      />
+      <User size={40} color="black"></User>
     </a>
   ));
 
   return (
     <div>
-      <AddTokenModal
-        show={showModal}
-        onHide={() => setShowModal(false)}
-      ></AddTokenModal>
-      <nav className="navbar navbar-light bg-light flex-md-nowrap shadow">
+    <LoginModal
+      show={showLoginModal}
+      onHide={() => setShowLoginModal(false)}
+      onSubmit={props.submitLoginForm}
+    ></LoginModal>
+
+
+    <AddTokenModal
+      show={showCreateModal}
+      onHide={() => setShowCreateModal(false)}
+      onSubmit={props.submitForm}
+    ></AddTokenModal>
+    
+      <nav className="navbar navbar-light bg-light flex-md-nowrap shadow appHeader">
         <a className="navbar-brand" target="_blank" rel="noopener noreferrer">
-          <img src={logo} width="70" height="70" alt=""></img>
+          <img src={logo} width="70" height="70" alt="" onClick={()=> gotoGallery()}></img>
         </a>
 
         {/* <InputGroup >
@@ -51,7 +92,7 @@ const Header = (props) => {
             variant="outline-danger"
             className="nav-button create-token"
             type="button"
-            onClick={() => setShowModal(true)}
+            onClick={() => setShowCreateModal(true)}
           >
             Create
           </Button>
@@ -59,6 +100,7 @@ const Header = (props) => {
             variant="outline-dark"
             className="nav-button connect-wallet"
             type="button"
+            onClick={() => {connectWallet()}}
           >
             Connect Wallet
           </Button>
@@ -69,9 +111,13 @@ const Header = (props) => {
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            <Dropdown.Item eventKey="1">Portfolio</Dropdown.Item>
+            <Dropdown.Item eventKey="1"  onClick={ () =>{gotoPortfolio()} }>Profile</Dropdown.Item>
             <Dropdown.Item eventKey="2">Settings</Dropdown.Item>
-            <Dropdown.Item eventKey="1">Logout</Dropdown.Item>
+            {!_.isEmpty(localStorage.getItem("userInfo")) ?
+            <Dropdown.Item eventKey="1" onClick={ () =>{logoutUser()} }>Logout</Dropdown.Item>
+            :
+            <Dropdown.Item eventKey="1" onClick={() => {setShowLoginModal(true)}}>Login</Dropdown.Item>
+            }
           </Dropdown.Menu>
         </Dropdown>
       </nav>
