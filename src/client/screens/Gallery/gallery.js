@@ -6,13 +6,13 @@ import './gallery.scss'
 function gallery(props) {
     return (
         <div className="gallery">
-            <Row className="w-100">
+            <Row className="w-100 rackRow ">
                 <Rack category={cardCategories.CONTEMPORARY} cards={props.fingerprints.filter(card => card.category == cardCategories.CONTEMPORARY)} ></Rack>
             </Row>
-            <Row className="w-100">
+            <Row className="w-100 rackRow">
                 <Rack category={cardCategories.MORDERN} cards={props.fingerprints.filter(card => card.category == cardCategories.MORDERN)} ></Rack>
             </Row>
-            <Row className="w-100">
+            <Row className="w-100 rackRow">
                 <Rack category={cardCategories.ABSTRACT} cards={props.fingerprints.filter(card => card.category == cardCategories.ABSTRACT)} ></Rack>
             </Row>
         </div>

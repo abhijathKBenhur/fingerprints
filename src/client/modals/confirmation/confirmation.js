@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-
-import {Button, Modal} from "react-bootstrap";
+import './confirmation.scss'
+import {Modal, Button } from "react-bootstrap";
 import { confirmable, createConfirmation } from "react-confirm";
-import "./confirmation.scss";
+
 class Confirmation extends React.Component {
   render() {
     const {
@@ -16,8 +16,9 @@ class Confirmation extends React.Component {
       enableEscape = true
     } = this.props;
     return (
-      <div className="static-modal confirmation-popup">
+      <div className="static-modal">
         <Modal
+          dialogClassName="confirmationModal"
           show={show}
           onHide={() => proceed(false)}
           backdrop={enableEscape ? true : "static"}
@@ -29,8 +30,7 @@ class Confirmation extends React.Component {
           <Modal.Body>{confirmation}</Modal.Body>
           <Modal.Footer>
             <Button variant="dark" onClick={() => proceed(false)}>{cancelLabel}</Button>
-            <Button
-              variant="danger"
+            <Button variant="danger"
               className="button-l"
               bsStyle="primary"
               onClick={() => proceed(true)}

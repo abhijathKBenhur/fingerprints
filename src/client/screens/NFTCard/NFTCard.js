@@ -39,26 +39,28 @@ const NFT = (props) => {
         });
     }
 
-    function buyToken(){
-        // if (confirm("Are your sure?","Buy Token")) {
-            console.log("buying")
-            let buyerAccount = localStorage.getItem("userInfo")
-            MongoDBInterface.buyToken({buyer: buyerAccount,...token}).then(tokenResponse => {
-                setToken(_.get(tokenResponse,'data.data'))
-                MongoDBInterface.buyUserToken({buyer: buyerAccount,referrer:referrer,..._.get(tokenResponse,'data.data')})
-                toast.dark('You just bought!' + tokenResponse.name, {
-                    position: "bottom-right",
-                    autoClose: 3000,
-                    hideProgressBar: true,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                });
-            })
-        //   } else {
-        //     console.log("cancelled buy")
-        //   }
+     function buyToken() {
+        confirm("This transaction will cost you "+ token.price+" ETH","Are your sure to Buy this token").then(success => {
+            if(success){
+                let buyerAccount = localStorage.getItem("userInfo")
+                MongoDBInterface.buyToken({buyer: buyerAccount,...token}).then(tokenResponse => {
+                    setToken(_.get(tokenResponse,'data.data'))
+                    MongoDBInterface.buyUserToken({buyer: buyerAccount,referrer:referrer,..._.get(tokenResponse,'data.data')}).then(success => {
+                        toast.dark('Token has been added to your collection!', {
+                            position: "bottom-right",
+                            autoClose: 3000,
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                        });
+                    })
+                })
+            }else{
+
+            }
+          }) 
     }
 
     return (
@@ -73,7 +75,7 @@ const NFT = (props) => {
                                 <div>
                                 {
                                 token.owner != localStorage.getItem("userInfo") ? 
-                                <ShoppingCart onClick={()=> buyToken()}></ShoppingCart>
+                                <ShoppingCart onClick={buyToken}></ShoppingCart>
                                 :
                                 <Share2 onClick={()=> copyURL()}></Share2> 
                                 }
