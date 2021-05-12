@@ -2,19 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Form, Container } from "react-bootstrap";
 import MongoDBInterface from '../../interface/MongoDBInterface';
 import { confirm } from "../../modals/confirmation/confirmation"
+import SocialShare from '../../modals/social-share/socialShare'
 import { useParams,useLocation } from "react-router-dom";
+import {  toast } from 'react-toastify';
+
 import { useHistory } from 'react-router-dom';
 import _ from 'lodash'
+
 import { Share2, ShoppingCart, Feather, User, AlignLeft } from 'react-feather';
 import './NFTCard.scss'
-import {  toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const NFT = (props) => {
     let history = useHistory();
     const [token, setToken] = useState({});
+    const [showShareModal, setShowShareModal] = useState(false);
     const location = useLocation()
     let referrer  = new URLSearchParams(location.search).get("referrer");
+    
 
     useEffect(() => {
        
@@ -26,17 +31,8 @@ const NFT = (props) => {
     let { id } = useParams();
     
     function copyURL(){
-        let shareURL = window.location.href + "?referrer="+ localStorage.getItem("userInfo")
-        navigator.clipboard.writeText(shareURL)
-        toast.dark('Copied to clipboard!', {
-            position: "bottom-right",
-            autoClose: 3000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
+        setShowShareModal(true)
+       
     }
 
      function buyToken() {
@@ -62,9 +58,12 @@ const NFT = (props) => {
             }
           }) 
     }
-
     return (
         <Container className="cardView">
+            <SocialShare
+                show={showShareModal}
+                onHide={() => setShowShareModal(false)}
+                ></SocialShare>
             <Row>
                 <Col md="3"></Col>
                 <Col md="5">
