@@ -29,7 +29,8 @@ export const addToken = payload => {
         description: payload.description,
         amount: parseFloat(payload.amount),
         price:  payload.price,
-        uri: payload.uri
+        uri: payload.uri,
+        type: payload.type
     })
 }
 export const getTokens = (payload) =>  { 

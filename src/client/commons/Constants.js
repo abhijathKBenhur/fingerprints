@@ -1,7 +1,17 @@
-const cardCategories = {
+const  CARD_CATEGORIES = {
     CONTEMPORARY: "Contemporary",
     MORDERN: "Mordern",
     ABSTRACT: "Abstract",
 }
 
-export default cardCategories
+const CARD_TYPES = {
+    LICENCE: "Licence",
+    COLLECTIBLE: "Collectible"
+}
+
+const CONSTANTS = {
+    CARD_CATEGORIES,
+    CARD_TYPES
+}
+
+export default CONSTANTS

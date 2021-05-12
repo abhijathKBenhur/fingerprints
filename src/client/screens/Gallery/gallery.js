@@ -1,19 +1,19 @@
 import React from 'react';
 import { Container, Row, Col } from "react-bootstrap";
-import cardCategories from '../../commons/Constants'
+import CONSTANTS from '../../commons/Constants'
 import Rack from '../../components/Rack/Rack'
 import './gallery.scss'
 function gallery(props) {
     return (
         <div className="gallery">
             <Row className="w-100 rackRow ">
-                <Rack category={cardCategories.CONTEMPORARY} cards={props.fingerprints.filter(card => card.category == cardCategories.CONTEMPORARY)} ></Rack>
+                <Rack category={CONSTANTS.CARD_CATEGORIES.CONTEMPORARY} cards={props.fingerprints.filter(card => card.category == CONSTANTS.CARD_CATEGORIES.CONTEMPORARY)} ></Rack>
             </Row>
             <Row className="w-100 rackRow">
-                <Rack category={cardCategories.MORDERN} cards={props.fingerprints.filter(card => card.category == cardCategories.MORDERN)} ></Rack>
+                <Rack category={CONSTANTS.CARD_CATEGORIES.MORDERN} cards={props.fingerprints.filter(card => card.category == CONSTANTS.CARD_CATEGORIES.MORDERN)} ></Rack>
             </Row>
             <Row className="w-100 rackRow">
-                <Rack category={cardCategories.ABSTRACT} cards={props.fingerprints.filter(card => card.category == cardCategories.ABSTRACT)} ></Rack>
+                <Rack category={CONSTANTS.CARD_CATEGORIES.ABSTRACT} cards={props.fingerprints.filter(card => card.category == CONSTANTS.CARD_CATEGORIES.ABSTRACT)} ></Rack>
             </Row>
         </div>
       
