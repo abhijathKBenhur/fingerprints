@@ -37,7 +37,7 @@ signup = (req, res) => {
 }
 
 buyUserToken =  (req, res) => {
-    console.log("Buying token", req.body.account);
+    console.log("Buying token", req.body.seller);
     let buyer = req.body.buyer
     let value = req.body.price
     let referrer = req.body.referrer
@@ -62,8 +62,8 @@ buyUserToken =  (req, res) => {
 
     let creditAmount = referrer ? value * 0.75 : value
 
-    User.findOneAndUpdate({ userName: req.body.account},{$inc : {balance : creditAmount}}).then((user, err) => {
-        console.log("Crediting token for",req.body.account, creditAmount);
+    User.findOneAndUpdate({ userName: req.body.seller},{$inc : {balance : creditAmount}}).then((user, err) => {
+        console.log("Crediting token for",req.body.seller, creditAmount);
         if (err) {
             console.log("Error Crediting token", value);
             return res.status(400).json({ success: false, error: err })

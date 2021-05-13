@@ -39,9 +39,10 @@ const NFT = (props) => {
         confirm("This transaction will cost you "+ token.price+" ETH","Are your sure to Buy this token").then(success => {
             if(success){
                 let buyerAccount = localStorage.getItem("userInfo")
-                MongoDBInterface.buyToken({buyer: buyerAccount,...token}).then(tokenResponse => {
+                let seller = token.type == "Licence" ? token.account : token.owner
+                MongoDBInterface.buyToken({buyer: buyerAccount, seller:seller,...token, }).then(tokenResponse => {
                     setToken(_.get(tokenResponse,'data.data'))
-                    MongoDBInterface.buyUserToken({buyer: buyerAccount,referrer:referrer,..._.get(tokenResponse,'data.data')}).then(success => {
+                    MongoDBInterface.buyUserToken({buyer: buyerAccount,seller,referrer:referrer,..._.get(tokenResponse,'data.data')}).then(success => {
                         toast.dark('Token has been added to your collection!', {
                             position: "bottom-right",
                             autoClose: 3000,
