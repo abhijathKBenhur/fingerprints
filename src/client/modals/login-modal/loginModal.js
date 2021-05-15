@@ -1,6 +1,7 @@
 import React, { Component, useState } from "react";
 import { Modal, Button, Row, Col, Form, InputGroup } from "react-bootstrap";
 import MongoDBInterface from '../../interface/MongoDBInterface'
+import { ToastContainer, toast } from 'react-toastify';
 import "./loginModal.scss";
 import _ from 'lodash'
 class LoginModal extends Component {
@@ -10,7 +11,7 @@ class LoginModal extends Component {
       userName: "",
       password: "",
       login: true,
-      callback: props.onSubmit
+      
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -23,17 +24,33 @@ class LoginModal extends Component {
     this.props.onHide()
     if(this.state.login){
       MongoDBInterface.login(this.state).then(success =>{
-        success.login = true
-        this.state.callback(success)
+        console.log(success)
+        let userInfo = _.get(success,'data.data.userName')
+        console.log("logged in ", )
+        localStorage.setItem("userInfo",userInfo)
+        window.location.reload();
       })  
     }else{
       MongoDBInterface.signup(this.state).then(success =>{
-        success.signup = true
-        this.state.callback(success)
+        let userInfo = _.get(success,'data.data.userName')
+        console.log("signed up ", )
+        localStorage.setItem("userInfo",userInfo)
+        window.location.reload();
       })
     }
-    // this.state.callback(this.state)
+    // toast.dark('Welcome ' + localStorage.getItem("userInfo") +" !", {
+    //   position: "bottom-right",
+    //   autoClose: 3000,
+    //   hideProgressBar: true,
+    //   closeOnClick: true,
+    //   pauseOnHover: true,
+    //   draggable: true,
+    //   progress: undefined,
+    //   });
+    
   }
+
+
 
   handleChange(event) {
     var stateObject = function() {

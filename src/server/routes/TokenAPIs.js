@@ -50,7 +50,7 @@ function clearEmptyTokens(sellerCriteria){
                 .status(404)
                 .json({ success: true, data: [] })
         }
-        Token.deleteMany({ age: { $eq: 0 } }).then(function(token){
+        Token.deleteMany({ amount: { $eq: 0 } }).then(function(token){
             console.log("Data deleted");
             // return res.status(200).json({ success: true, data: token }) // Success
         }).catch(function(error){
@@ -75,21 +75,23 @@ buyToken = async (req, res) => {
         if (docs.length){
             console.log("doc found");
 
-            Token.findOneAndUpdate(findCriteria,{$inc : {amount : + 1}}).then((token, err) => {
-                console.log("Adding to store");
+            Token.findOneAndUpdate(findCriteria,{$inc : {amount : + 1}},{new:true}).then((token, err) => {
+                console.log("Adding to store",token);
                 clearEmptyTokens(sellerCriteria)
                 if (err) {
                     console.log("Error Adding to store");
                     return res.status(400).json({ success: false, error: err })
                 }
                 if (!token) {
+                    console.log(" failed update");
+
                     return res
                         .status(404)
                         .json({ success: true, data: [] })
                 }
                 console.log(" Addinged to store");
                 return res
-                        .status(404)
+                        .status(200)
                         .json({ success: true, data: token })
             }).catch(err => {
                 console.log("Error Addinged store");
@@ -103,7 +105,7 @@ buyToken = async (req, res) => {
             const newToken = new Token(req.body)
             newToken.save().then(() => {
                 clearEmptyTokens(sellerCriteria)
-                return res.status(201).json({
+                return res.status(200).json({
                     success: true,
                     tokenId: newToken.tokenId,
                     message: 'new token created!',
@@ -145,7 +147,7 @@ updatePrice = async (req, res) => {
 }
 
 getTokenById = async (req, res) => {
-    console.log("Getting token")
+    console.log("Getting token" , req.params.tokenId, req.params.owner)
     console.log(Token)
 
     await Token.findOne({ tokenId: req.params.tokenId, owner:req.params.owner }, (err, token) => {
@@ -169,46 +171,49 @@ getTokens = async (req, res) => {
     payLoad = {};
     if(req.body.userName){
         payLoad.owner = req.body.userName
-    }
-    Token.aggregate([
-        {
-            $group:{
-                "_id": { 
-                    "tokenId": "$tokenId", 
-                },
-                "price": {"$min":"$price"},
-                "account": {"$first":"$account"},
-                "owner": {"$first":"$owner"},
-                "name": {"$first":"$name"},
-                "category": {"$first":"$category"},
-                "description": {"$first":"$description"},
-                "amount": {"$first":"$amount"},
-                "type": {"$first":"$type"},
-                "uri": {"$first":"$uri"},
-                "tokenId": {"$first":"$tokenId"},
-               
-            },
+        await Token.find(payLoad, (err, token) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: "here" })
         }
-    ]).then(token => {
+        if (!token.length) {
+            return res
+                .status(404)
+                .json({ success: false, error: `token not found` })
+        }
         return res.status(200).json({ success: true, data: token })
-    }).catch(err => {
-        console.log(err)
-        return res.status(200).json({ success: false, error: "err" })
-    })
+        }).catch(err => {
+            return res.status(200).json({ success: false, error: "err" })
+        })
+    }else{
+        Token.aggregate([
+            {
+                $group:{
+                    "_id": { 
+                        "tokenId": "$tokenId", 
+                    },
+                    "price": {"$min":"$price"},
+                    "account": {"$first":"$account"},
+                    "owner": {"$first":"$owner"},
+                    "name": {"$first":"$name"},
+                    "category": {"$first":"$category"},
+                    "description": {"$first":"$description"},
+                    "amount": {"$first":"$amount"},
+                    "type": {"$first":"$type"},
+                    "uri": {"$first":"$uri"},
+                    "tokenId": {"$first":"$tokenId"},
+                   
+                },
+            }
+        ]).then(token => {
+            return res.status(200).json({ success: true, data: token })
+        }).catch(err => {
+            console.log(err)
+            return res.status(200).json({ success: false, error: "err" })
+        })
+    }
+    
 
-    // await Token.find(payLoad, (err, token) => {
-    //     if (err) {
-    //         return res.status(400).json({ success: false, error: "here" })
-    //     }
-    //     if (!token.length) {
-    //         return res
-    //             .status(404)
-    //             .json({ success: false, error: `token not found` })
-    //     }
-    //     return res.status(200).json({ success: true, data: token })
-    // }).catch(err => {
-    //     return res.status(200).json({ success: false, error: "err" })
-    // })
+    
 }
 
 const storage = multer.diskStorage({

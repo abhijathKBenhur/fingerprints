@@ -62,7 +62,7 @@ const Header = (props) => {
     <LoginModal
       show={showLoginModal}
       onHide={() => setShowLoginModal(false)}
-      onSubmit={props.submitLoginForm}
+      
     ></LoginModal>
 
 
@@ -88,14 +88,18 @@ const Header = (props) => {
                 />
                 </InputGroup> */}
         <form className="buttonGroup">
-          <Button
-            variant="outline-danger"
-            className="nav-button create-token"
-            type="button"
-            onClick={() => setShowCreateModal(true)}
-          >
-            Create
-          </Button>
+        {!_.isEmpty(localStorage.getItem("userInfo")) ?
+        <Button
+        variant="outline-danger"
+        className="nav-button create-token"
+        type="button"
+        onClick={() => setShowCreateModal(true)}
+        >
+          Create
+        </Button>:
+        <div></div>
+        }
+          
           <Button
             variant="outline-dark"
             className="nav-button connect-wallet"

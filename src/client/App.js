@@ -42,25 +42,7 @@ class App extends Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
-  async submitLoginForm(data){
-    let userInfo = _.get(data,'data.data.userName')
-    if(data.login){
-      console.log("logged in ", )
-      localStorage.setItem("userInfo",userInfo)
-    }else if(data.signup){
-      localStorage.setItem("userInfo",userInfo)
-    }
-    toast.dark('Welcome ' + localStorage.getItem("userInfo") +" !", {
-      position: "bottom-right",
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      });
-    window.location.reload();
-  }
+    
 
   async onSubmit(form) {
     // BlockchainInterface.getFilePath(form.file).then(path => {
@@ -80,7 +62,7 @@ class App extends Component {
     return (
         <div className="appContainer">
           <ToastContainer></ToastContainer>
-          <Header submitForm={this.onSubmit} submitLoginForm={this.submitLoginForm}></Header>
+          <Header submitForm={this.onSubmit}></Header>
           <Container fluid className="cardSection p-5">
             <Switch>
               <Route
