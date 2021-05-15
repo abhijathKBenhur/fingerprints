@@ -76,7 +76,6 @@ const NFT = (props) => {
                         })
                     })
                 }else{
-    
                 }
               }) 
          }
