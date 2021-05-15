@@ -26,7 +26,7 @@ addToken = (req, res) => {
         .then(() => {
             return res.status(201).json({
                 success: true,
-                id: newToken._id,
+                tokenId: newToken.tokenId,
                 message: 'new token created!',
             })
         })
@@ -38,61 +38,97 @@ addToken = (req, res) => {
         })
 }
 
+function clearEmptyTokens(sellerCriteria){
+    Token.findOneAndUpdate(sellerCriteria,{$inc : {amount : - 1}},{new:true}).then((user, err) => {
+        console.log("reduc to store");
+        if (err) {
+            console.log("Error reduc to store");
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!user) {
+            return res
+                .status(404)
+                .json({ success: true, data: [] })
+        }
+        Token.deleteMany({ age: { $eq: 0 } }).then(function(token){
+            console.log("Data deleted");
+            // return res.status(200).json({ success: true, data: token }) // Success
+        }).catch(function(error){
+            console.log(error); // Failure
+        });
+    }).catch(err => {
+        console.log("Error reduced store");
+        // return res.status(200).json({ success: false, data: err })
+    })
+}
+
 
 buyToken = async (req, res) => {
     console.log("Buying token", req.body);
     let buyer = req.body.buyer
     let seller = req.body.account
-    let buyTokenId = req.body._id
+    let buyTokenId = req.body.tokenId
 
-    const findCriteria = { owner: buyer,_id: buyTokenId};
-    const sellerCriteria = { owner: seller,_id: buyTokenId};
+    const findCriteria = { owner: buyer,tokenId: buyTokenId};
+    const sellerCriteria = { owner: seller,tokenId: buyTokenId};
     Token.find(findCriteria, function (err, docs) {
         if (docs.length){
-            Token.findOneAndUpdate(findCriteria,{$inc : {amount : + 1}}).then((user, err) => {
-                console.log("Adding to store", value);
+            console.log("doc found");
+
+            Token.findOneAndUpdate(findCriteria,{$inc : {amount : + 1}}).then((token, err) => {
+                console.log("Adding to store");
+                clearEmptyTokens(sellerCriteria)
                 if (err) {
-                    console.log("Error Adding to store", value);
+                    console.log("Error Adding to store");
                     return res.status(400).json({ success: false, error: err })
                 }
-                if (!user) {
+                if (!token) {
                     return res
                         .status(404)
                         .json({ success: true, data: [] })
                 }
-                console.log(" Addinged to store", value);
+                console.log(" Addinged to store");
+                return res
+                        .status(404)
+                        .json({ success: true, data: token })
             }).catch(err => {
-                console.log("Error Addinged store", value);
+                console.log("Error Addinged store");
                 return res.status(200).json({ success: false, data: err })
             })
         }else{
-            body.owner = buyer;
-            body.amount = 1;
-            const newToken = new Token(body)
-            newToken.save(function(err){
-                cb(err,user);
-            });
+            console.log("new doc add");
+            req.body.owner = buyer;
+            req.body.amount = 1;
+            delete req.body._id
+            const newToken = new Token(req.body)
+            newToken.save().then(() => {
+                clearEmptyTokens(sellerCriteria)
+                return res.status(201).json({
+                    success: true,
+                    tokenId: newToken.tokenId,
+                    message: 'new token created!',
+                })
+
+            })
+            .catch(error => {
+                console.log(error)
+                return res.status(400).json({
+                    error,
+                    message: 'new token not created!',
+                })
+            })
         }
-        Token.findOneAndUpdate(sellerCriteria,{$inc : {amount : - 1}}).then((user, err) => {
-            console.log("reduc to store", value);
-            if (err) {
-                console.log("Error reduc to store", value);
-                return res.status(400).json({ success: false, error: err })
-            }
-            if (!user) {
-                return res
-                    .status(404)
-                    .json({ success: true, data: [] })
-            }
-            console.log(" reduced to store", value);
-        }).catch(err => {
-            console.log("Error reduced store", value);
-            return res.status(200).json({ success: false, data: err })
-        })
+       
     });
+}
 
 
-    await Token.findByIdAndUpdate(buyTokenId, update , (err, token) => {
+
+
+updatePrice = async (req, res) => {
+    console.log("updateing token price" , req.body.tokenId ," " , req.body.setter , " price " , req.body.price )
+
+    await Token.updateOne({ tokenId: req.body.tokenId, owner : req.body.setter} ,{ price : req.body.price }, {new:true}, (err, token) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
@@ -102,22 +138,17 @@ buyToken = async (req, res) => {
                 .status(404)
                 .json({ success: true, data: [] })
         }
-        // change token owner
-        // reduce buyer ETH
-        // increase seller ETH
-        console.log("calling buy api")
         return res.status(200).json({ success: true, data: token })
     }).catch(err => {
         return res.status(200).json({ success: false, data: err })
     })
 }
 
-
 getTokenById = async (req, res) => {
     console.log("Getting token")
     console.log(Token)
 
-    await Token.findOne({ _id: req.params.id }, (err, token) => {
+    await Token.findOne({ tokenId: req.params.tokenId, owner:req.params.owner }, (err, token) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
@@ -139,31 +170,45 @@ getTokens = async (req, res) => {
     if(req.body.userName){
         payLoad.owner = req.body.userName
     }
-    // Token.aggregate([
-    //     {
-    //         $group:{
-    //             _id: "$_id", price: {$min: 1}, 
-    //         }
+    Token.aggregate([
+        {
+            $group:{
+                "_id": { 
+                    "tokenId": "$tokenId", 
+                },
+                "price": {"$min":"$price"},
+                "account": {"$first":"$account"},
+                "owner": {"$first":"$owner"},
+                "name": {"$first":"$name"},
+                "category": {"$first":"$category"},
+                "description": {"$first":"$description"},
+                "amount": {"$first":"$amount"},
+                "type": {"$first":"$type"},
+                "uri": {"$first":"$uri"},
+                "tokenId": {"$first":"$tokenId"},
+               
+            },
+        }
+    ]).then(token => {
+        return res.status(200).json({ success: true, data: token })
+    }).catch(err => {
+        console.log(err)
+        return res.status(200).json({ success: false, error: "err" })
+    })
+
+    // await Token.find(payLoad, (err, token) => {
+    //     if (err) {
+    //         return res.status(400).json({ success: false, error: "here" })
     //     }
-    // ]).then(token => {
+    //     if (!token.length) {
+    //         return res
+    //             .status(404)
+    //             .json({ success: false, error: `token not found` })
+    //     }
     //     return res.status(200).json({ success: true, data: token })
     // }).catch(err => {
     //     return res.status(200).json({ success: false, error: "err" })
     // })
-
-    await Token.find(payLoad, (err, token) => {
-        if (err) {
-            return res.status(400).json({ success: false, error: "here" })
-        }
-        if (!token.length) {
-            return res
-                .status(404)
-                .json({ success: false, error: `token not found` })
-        }
-        return res.status(200).json({ success: true, data: token })
-    }).catch(err => {
-        return res.status(200).json({ success: false, error: "err" })
-    })
 }
 
 const storage = multer.diskStorage({
@@ -218,8 +263,9 @@ getFilePath = async (req, res) => {
 
 router.post('/getFilePath', getFilePath)
 router.post('/token', addToken)
-router.get('/token/:id', getTokenById)
+router.get('/token/:tokenId/:owner', getTokenById)
 router.post('/tokens', getTokens)
 router.post('/buyToken', buyToken)
+router.post('/updatePrice', updatePrice)
 
 module.exports = router

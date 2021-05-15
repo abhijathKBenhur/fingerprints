@@ -5,8 +5,8 @@ import {  Feather, User } from 'react-feather';
 import "./Rack.scss";
 const Rack = (props) => {
     let history = useHistory();
-    function openCardView(id){
-        history.push('/card/'+ id)
+    function openCardView(tokenId,owner){
+        history.push('/card/'+ tokenId +'?owner='+ owner)
     }
 
     return (
@@ -17,7 +17,7 @@ const Rack = (props) => {
                 {props.cards.map((fingerprint,index) => {
                     return (
                     <Card key={index} className="tokenCard" onClick={() =>{
-                         openCardView(fingerprint._id)
+                         openCardView(fingerprint.tokenId, fingerprint.owner)
                     }}>
                         <Card.Img className="tokenCardImage" variant="top" src={window.location.origin+fingerprint.uri} />
                         <Card.Body className="rack-card-body">
@@ -33,9 +33,10 @@ const Rack = (props) => {
                             </div>
                             
                         </Card.Body>
-                        <Card.Footer className="rack-card-footer">
+                        <Card.Footer className="rack-card-footer d-flex justify-content-between">
                             {/* <small className="text-muted">{fingerprint.supply} In supply</small> */}
                             <small className="text-muted">{fingerprint.price} ETH</small>
+                            <small className="text-muted">{fingerprint.amount} Left</small>
                         </Card.Footer>
                     </Card>
                 )})}

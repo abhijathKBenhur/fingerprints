@@ -5,11 +5,11 @@ import { confirm } from "../../modals/confirmation/confirmation"
 import SocialShare from '../../modals/social-share/socialShare'
 import { useParams,useLocation } from "react-router-dom";
 import {  toast } from 'react-toastify';
-
+import LoginModal from "../../modals/login-modal/loginModal";
 import { useHistory } from 'react-router-dom';
 import _ from 'lodash'
 
-import { Share2, ShoppingCart, Feather, User, AlignLeft } from 'react-feather';
+import { Share2, ShoppingCart, Feather, User, Edit } from 'react-feather';
 import './NFTCard.scss'
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -17,50 +17,76 @@ const NFT = (props) => {
     let history = useHistory();
     const [token, setToken] = useState({});
     const [showShareModal, setShowShareModal] = useState(false);
+    const [showLoginModal, setShowLoginModal] = useState(false);
     const location = useLocation()
     let referrer  = new URLSearchParams(location.search).get("referrer");
+    let owner  = new URLSearchParams(location.search).get("owner");
     
 
     useEffect(() => {
-       
-        MongoDBInterface.getTokenById(id).then(token => {
+        console.log("getting toke " + tokenId + "owner: ", owner)
+        MongoDBInterface.getTokenById(tokenId,owner).then(token => {
             setToken(_.get(token,'data.data'));
         })
     }, []); // call the method once
 
-    let { id } = useParams();
+    let { tokenId } = useParams();
     
     function copyURL(){
         setShowShareModal(true)
        
     }
 
-     function buyToken() {
-        confirm("This transaction will cost you "+ token.price+" ETH","Are your sure to Buy this token").then(success => {
-            if(success){
-                let buyerAccount = localStorage.getItem("userInfo")
-                let seller = token.type == "Licence" ? token.account : token.owner
-                MongoDBInterface.buyToken({buyer: buyerAccount, seller:seller,...token, }).then(tokenResponse => {
-                    setToken(_.get(tokenResponse,'data.data'))
-                    MongoDBInterface.buyUserToken({buyer: buyerAccount,seller,referrer:referrer,..._.get(tokenResponse,'data.data')}).then(success => {
-                        toast.dark('Token has been added to your collection!', {
-                            position: "bottom-right",
-                            autoClose: 3000,
-                            hideProgressBar: true,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: undefined,
-                        });
-                    })
+    function editPrice(){
+        confirm("Set sell price.","Please enter the sell price","Ok","Cancel",true).then(success => {
+            if(success.proceed){
+                let setter = localStorage.getItem("userInfo")
+                MongoDBInterface.updatePrice({setter: setter, price: Number(success.input), tokenId:tokenId}).then(tokenResponse => {
+                    
+                   
                 })
             }else{
 
             }
           }) 
     }
+
+     function buyToken() {
+         if(_.isEmpty(localStorage.getItem("userInfo"))){
+            setShowLoginModal(true)
+         }else{
+            confirm("This transaction will cost you "+ token.price+" ETH","Are your sure to buy this token","OK","Back").then(success => {
+                if(success.proceed){
+                    let buyerAccount = localStorage.getItem("userInfo")
+                    let seller = token.type == "Licence" ? token.account : token.owner
+                    MongoDBInterface.buyToken({buyer: buyerAccount, seller:seller,...token, }).then(tokenResponse => {
+                        history.push('/home')
+                        MongoDBInterface.buyUserToken({buyer: buyerAccount,seller,referrer:referrer,..._.get(tokenResponse,'data.data')}).then(success => {
+                            toast.dark('Token has been added to your collection!', {
+                                position: "bottom-right",
+                                autoClose: 3000,
+                                hideProgressBar: true,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                            });
+    
+                        })
+                    })
+                }else{
+    
+                }
+              }) 
+         }
+    }
     return (
         <Container className="cardView">
+               <LoginModal
+                show={showLoginModal}
+                onHide={() => setShowLoginModal(false)}
+                onSubmit={props.submitLoginForm}
+                ></LoginModal>
             <SocialShare
                 show={showShareModal}
                 onHide={() => setShowShareModal(false)}
@@ -72,12 +98,16 @@ const NFT = (props) => {
                         <Card.Footer>
                             <div className="d-flex justify-content-between">
                                 <small className="text-muted">{token.price} ETH</small>
+                                
                                 <div>
                                 {
                                 token.owner != localStorage.getItem("userInfo") ? 
                                 <ShoppingCart onClick={buyToken}></ShoppingCart>
                                 :
-                                <Share2 onClick={()=> copyURL()}></Share2> 
+                                <React.Fragment>
+                                    <Edit onClick={editPrice}></Edit>
+                                    <Share2 className="ml-2" onClick={()=> copyURL()}></Share2> 
+                                </React.Fragment>
                                 }
                                 </div>
                             </div>

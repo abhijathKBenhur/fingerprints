@@ -1,4 +1,5 @@
 import axios from 'axios'
+import {uuid} from 'uuidv4'
 const api = axios.create({
     baseURL: 'http://localhost:4000/api',
 })
@@ -19,6 +20,15 @@ export const login = payload => {
     })
 }
 
+export const updatePrice = payload => {
+    return api.post(`/updatePrice`,{
+        setter: payload.setter,
+        price: payload.price,
+        tokenId: payload.tokenId,
+    })
+}
+
+
 
 export const addToken = payload => {
     return api.post(`/token`,{
@@ -30,15 +40,16 @@ export const addToken = payload => {
         amount: parseFloat(payload.amount),
         price:  payload.price,
         uri: payload.uri,
-        type: payload.type
+        type: payload.type,
+        tokenId:uuid()
     })
 }
 export const getTokens = (payload) =>  { 
     // return api.post("/tokens",payload) 
     return api.post("/tokens",payload) 
 }
-export const getTokenById = id => { 
-    return api.get(`/token/${id}`) 
+export const getTokenById = (tokenId, owner) => { 
+    return api.get(`/token/${tokenId}/${owner}`) 
 }
 
 export const getFilePath = file => { 
@@ -77,7 +88,8 @@ const MongoDBInterface = {
     login,
     buyToken,
     buyUserToken,
-    getUserInfo
+    getUserInfo,
+    updatePrice
 }
 
 export default MongoDBInterface

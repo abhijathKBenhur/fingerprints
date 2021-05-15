@@ -36,10 +36,10 @@ const Header = (props) => {
     history.push('/profile')
   }
 
-
   function connectWallet(){
     
   }
+
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   // const [loggedUserInfo, setLoggedUserInfo] = useState(undefined);

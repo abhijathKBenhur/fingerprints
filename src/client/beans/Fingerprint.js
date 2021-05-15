@@ -7,7 +7,7 @@ export default class Fingerprint{
         this.price = Number(window.web3.utils.fromWei(options.price.toString(), 'ether')).toFixed(2)  
         this.amount = Number(options.amount)  
         this.uri = options.uri
-        this._id = options._id
+        this.tokenId = options.tokenId
         this.owner = options.owner
     }
 }

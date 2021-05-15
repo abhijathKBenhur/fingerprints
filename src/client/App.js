@@ -89,7 +89,7 @@ class App extends Component {
                   <Gallery fingerprints={this.state.tokens} {...props} />
                 )}
               />
-              <Route path="/card/:id" children={<NFTCard />} />
+              <Route path="/card/:tokenId" children={<NFTCard />} />
               <Route path="/profile" children={<Profile />} />
             </Switch>
           </Container>
